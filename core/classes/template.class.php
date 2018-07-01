@@ -1,17 +1,53 @@
 <?php
 abstract class Template
 {
-	protected $dir = '';
+	protected $dir = ROOT . '/core/view/';
 
-	protected $template = null;
+	private $template = null;
 
-	protected $current_template = null;
+	private $current_template = null;
 
-	protected $data = array ();
+	protected $data = array();
 
-	public $result = array ();
+	protected $result = array();
 
-	public function set($name, $var)
+	final protected function load_template($tpl_name)
+    {
+		$url = @parse_url ( $tpl_name );
+
+		$tpl_name = pathinfo( $url['path'] );
+
+		$tpl_name = $tpl_name['basename'];
+
+		$type = explode( '.', $tpl_name );
+
+		$type = strtolower( end( $type ) );
+
+		if ( $type != 'tpl' ) return 'only ".tpl" extension allowed';
+
+		if ( $tpl_name == '' ) {
+
+			echo 'Incorrect or blank template name: ' . $tpl_name;
+
+			return false;
+
+		} elseif (!file_exists( $this->dir . $tpl_name ) ) {
+
+		    echo 'Template not found: ' . $tpl_name;
+
+		    return false;
+		}
+
+		$this->template = file_get_contents( $this->dir . $tpl_name );
+
+		//if (strpos($this->template, '{foreach:') !== false) $this->template = preg_replace_callback("#\\{foreach:(.*?)\\}#si", array(&$this, 'do_foreach'), $this->template );
+
+		$this->current_template = $this->template;
+
+		return true;
+	}
+
+	final protected function set($name, $var)
     {
 		if( is_array( $var ) && count( $var ) ) {
 
@@ -25,51 +61,14 @@ abstract class Template
 			$this->data[$name] = $var;
 	}
 
-
-	public function load_template($tpl_name)
-    {
-
-		$url = @parse_url ( $tpl_name );
-
-		$file_path = dirname ($url['path']);
-
-		$tpl_name = pathinfo($url['path']);
-
-		$tpl_name = $tpl_name['basename'];
-
-		$type = explode( ".", $tpl_name );
-
-		$type = strtolower( end( $type ) );
-
-		if ($type != "tpl") return "";
-
-		if ($file_path AND $file_path != ".") $tpl_name = $file_path."/".$tpl_name;
-
-		if( stripos ( $tpl_name, ".php" ) !== false ) die( "Not Allowed Template Name: " . str_replace(ROOT, '', $this->dir)."/".$tpl_name );
-
-		if( $tpl_name == '' || !file_exists( $this->dir . $tpl_name ) ) {
-
-			echo "Template not found: " . str_replace(ENGINE, '', $this->dir).$tpl_name;
-
-			return false;
-
-		}
-
-		$this->template = file_get_contents( $this->dir . $tpl_name );
-
-		$this->current_template = $this->template;
-
-		return true;
-	}
-
-	protected function _clear()
+	final protected function _clear()
     {
 		$this->data = array();
 
 		$this->current_template = $this->template;
 	}
 
-	protected function clear()
+	final protected function clear()
     {
 		$this->data = array();
 
@@ -78,7 +77,7 @@ abstract class Template
 		$this->template = null;
 	}
 
-	protected function global_clear()
+	final protected function global_clear()
     {
 		$this->data = array ();
 
@@ -89,21 +88,23 @@ abstract class Template
 		$this->template = null;
 	}
 
-	public function compile($tpl)
+	final protected function compile($tpl)
     {
 		foreach ( $this->data as $key_find => $key_replace ) {
 
 			$find[] = $key_find;
 
 			$replace[] = $key_replace;
-
 		}
 
 		$this->current_template = str_replace( $find, $replace, $this->current_template );
 
-		if( isset( $this->result[$tpl] ) ) $this->result[$tpl] .= $this->current_template;
+		if( isset( $this->result[$tpl] ) ) {
 
-		else $this->result[$tpl] = $this->current_template;
+		    $this->result[$tpl] .= $this->current_template;
+
+		} else
+		    $this->result[$tpl] = $this->current_template;
 
 		$this->_clear();
 	}

@@ -1,15 +1,17 @@
 <?php
-class Route
+final class Route
 {
-	static public $get = array();
+	protected static $errors = array();
 
-	static function start()
+	public static $routes = array();
+
+	public static $controller = 'Main';
+
+	public static $action = 'index';
+
+	public static function index()
 	{
-		$controller_name = 'Main';
-
-		$action_name = 'index';
-
-		if (strpos($_SERVER['REQUEST_URI'], '?') !== false) {
+		if ( strpos($_SERVER['REQUEST_URI'], '?') !== false ) {
 
 			$request = explode('?', $_SERVER['REQUEST_URI']);
 
@@ -17,41 +19,58 @@ class Route
 
 		} else $request = $_SERVER['REQUEST_URI'];
 
-		$routes = explode('/', $request);
+		self::$routes = $request == '/' ? self::$routes : explode('/', $request);
 
-		if ( !empty($routes[1]) ) $controller_name = $routes[1];
+		if ( !empty(self::$routes[1]) ) self::$controller = self::$routes[1];
 
-		if ( !empty($routes[2]) ) $action_name = $routes[2];
+		if ( !empty(self::$routes[2]) ) self::$action = self::$routes[2];
 
-		if ( !empty($routes[3]) && $routes[3] != '' ) Route::$get['page'] = $routes[3];
+		Event::load_events(self::$controller);
+
+		Event::trigger('route.getdata.convert.before');
 
 		if ( $_SERVER['QUERY_STRING'] != '' ) {
 
-			$query_string = explode('&', $_SERVER['QUERY_STRING']);
+			parse_str($_SERVER['QUERY_STRING'], $query_array);
 
-			$query_out = array();
-
-			foreach ($query_string as $query) {
-
-				$query_array = explode('=', $query);
-
-				$query_out[$query_array[0]] = $query_array[1];
-			}
-
-			Route::$get['query'] = $query_out;
+			Query::$get = $query_array;
 
 			$_SERVER['QUERY_STRING'] = '';
 		}
+
+		Event::trigger('route.postdata.convert.before');
+
+		if ( $_POST ) Query::$post = $_POST;
 
 		$_GET = array();
 
 		$_POST = array();
 
-		$model_name = 'Model_'.$controller_name;
+		$_REQUEST = array();
 
-		$controller_name = 'Controller_'.$controller_name;
+		$request_headers = getallheaders();
 
-		$action_name = 'action_'.$action_name;
+		if ($request_headers['X-Requested-With'] == 'XMLHttpRequest') {
+
+			Event::trigger('route.xhttp.switch.before');
+
+			self::xhttp();
+
+		} else {
+
+			Event::trigger('route.http.switch.before');
+
+			self::http();
+		}
+	}
+
+	private static function http()
+	{
+		$model_name = 'Model_'.self::$controller;
+
+		$controller_name = 'Controller_'.self::$controller;
+
+		$action = 'action_'.self::$action;
 
 		$model_path = ROOT . '/core/models/'.strtolower($model_name).'.php';
 
@@ -63,33 +82,64 @@ class Route
 
 			include $controller_path;
 
+			Event::trigger('route.controller.load.before', $controller_name);
+
 			$controller = new $controller_name;
 
 		} else {
 
-		    $controller = new Controller_Standart($routes[1]);
-		}
+			include ROOT . '/core/classes/controller.standart.class.php';
 
-		$action = $action_name;
+			Event::trigger('route.controller.load.before', 'Controller_Standart');
+
+		    $controller = new Controller_Standart;
+		}
 
 		if ( method_exists($controller, $action) ) {
 
+			Event::trigger('route.action.execute.before', $action);
+
 			$controller->$action();
 
-            $controller->view->generate_index();
+			Event::trigger('route.document.build.before', $controller);
 
-            echo $controller->view->result['index'];
+            $controller->view->build_document();
+
+			Event::trigger('route.document.echo.before');
+
+            Doc::echo_document();
 
 		} else {
 
-			Route::ErrorPage404();
+			self::Page404('action not found');
 		}
-
 	}
 
-	static function ErrorPage404()
+	private static function xhttp()
 	{
-        die('something went wrong.');
+		$method = self::$controller;
+
+		$api = new Extension('Api');
+
+		if ( method_exists($api, $method) ) {
+
+			Doc::$result = $api->$method(self::$action);
+
+		} else
+		    Doc::$result = array('answer'=>'error','data'=>'method not exists');
+
+		Doc::echo_xhttp();
+	}
+
+	public static function Page404($message = false)
+	{
+	    if ($message === false) $message = 'somthing went wrong';
+
+		/*$logs = new Logs;
+
+		$logs->logging(debug_backtrace());*/
+
+        die('Died: '.$message);
     }
 }
 ?>

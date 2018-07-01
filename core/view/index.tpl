@@ -1,7 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Cyberhelp.ru - Web разработка</title>
+    <title>{metatitle}</title>
+    <meta name="description" content="{description}" />
+    <meta name="keywords" content="{keywords}" />
     <link rel="shortcut icon" href="{THEME}/images/logo_ico.gif" />
     <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="{THEME}/bootstrap/css/bootstrap.min.css">
@@ -22,7 +24,7 @@
                     <ul>
                         <li><a href="/" rel="nofollow">Главная</a></li>
                         <li><a href="/services.html" rel="nofollow">Услуги</a></li>
-              		    <li><a href="/projects/" rel="nofollow">Последние проекты</a></li>
+              		    <li><a href="/projects.html" rel="nofollow">Последние проекты</a></li>
               		    <li><a href="/contacts.html" rel="nofollow">Контакты</a></li>
                     </ul>
                 </div>
@@ -36,11 +38,9 @@
             {content}
             <div id="mainfooter">
                 <a href="/" rel="nofollow">ГЛАВНАЯ</a> |
-                <a href="/services.html" rel="nofollow">УСЛУГИ</a> |
-                <a href="/projects/" rel="nofollow">ПОСЛЕДНИЕ ПРОЕКТЫ</a> |
                 <a href="/dle_moduli/">БЕСПЛАТНЫЕ МОДУЛИ ДЛЯ DLE</a> |
-                <a href="/video_learn/" rel="nofollow">БЕСПЛАТНЫЕ ВИДЕОУРОКИ HTML, CSS, JAVS SCRIPT</a>
-                <div>НАШ ТЕЛЕФОН: +7 (926) 365-365-7 <a href="http://www.cyberhelp.ru/">web разработка</a> 2007 - 2018 &copy; Кибер Хелп<img src="{THEME}/images/ra.png" style="vertical-align:middle; width:15px !important; height:15px !important; " /> web артель "Мы Cлавяне"</div>
+                <a href="/video_lesson/">БЕСПЛАТНЫЕ ВИДЕОУРОКИ HTML, CSS, JAVS SCRIPT</a>
+                <div><a href="http://www.cyberhelp.ru/">web разработка</a> 2007 - 2018 &copy; Кибер Хелп<img src="{THEME}/images/ra.png" style="vertical-align:middle; width:15px !important; height:15px !important; " /> web артель "Мы Cлавяне"</div>
             </div>
         </div>
     </div>
