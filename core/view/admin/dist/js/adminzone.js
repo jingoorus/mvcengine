@@ -15,8 +15,11 @@ var $core = {
                 if(page_name.indexOf('.html') > 0) $('#addPageInput').val(page_name.replace('.html',''));
             }
         },
+        controlTagName: function(){
+            $(this).closest('.row').find('textarea').eq(0).attr({'name': 'tags_data[' + $(this).val() + ']'});
+        },
         addTagField: function(){
-            var textarea = '<div class="row data-row"><div class="col-sm-4"><input type="text" class="form-control" name="tags[]" value="newtagname"></div><div class="col-sm-7"><textarea class="form-control" name="tags_data[]"></textarea></div><div class="col-sm-1 text-right"><span class="fui-trash"></span></div></div>';
+            var textarea = '<div class="row data-row"><div class="col-sm-4"><input type="text" class="form-control" name="tags[]" value="newtagname"></div><div class="col-sm-7"><textarea class="form-control pageEditorTextarea" name="tags_data[newtagname]"></textarea></div><div class="col-sm-1 text-right"><span class="fui-trash"></span></div></div>';
             $('#addTag').closest('.row').before(textarea);
             $('.pageEditorTextarea:last').summernote();
         },
@@ -73,3 +76,4 @@ $(document).on('ready', $core.init);
 $(document).on('click', '#addTag', $core.instruments.addTagField);
 $(document).on('click', '#PageEditBlock .row .fui-trash', $core.instruments.deleteTagField);
 $(document).on('change', '#addPageInput, #engineAddRadios input', $core.instruments.controlAddEngine);
+$(document).on('change', '#PageEditBlock input[name="tags[]"]', $core.instruments.controlTagName);

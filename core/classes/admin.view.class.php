@@ -39,7 +39,7 @@ class View_Admin extends View
 
                 array('class'=>'col-sm-4'),
 
-                $this->tag('input', array('type'=>'text', 'class'=>'form-control', 'name'=>'tags', 'value'=>'content'), '', false)
+                $this->tag('input', array('type'=>'text', 'class'=>'form-control', 'name'=>'tags[]', 'value'=>'content'), '', false)
 
             ) . $this->tag(
 
@@ -47,7 +47,7 @@ class View_Admin extends View
 
                 array('class'=>'col-sm-7'),
 
-                $this->tag('textarea', array('class'=>'form-control pageEditorTextarea', 'name'=>'tags_data[]'),'')
+                $this->tag('textarea', array('class'=>'form-control pageEditorTextarea', 'name'=>'tags_data[content]'),'')
 
             ).$this->tag(
 
