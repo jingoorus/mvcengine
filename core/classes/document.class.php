@@ -27,7 +27,7 @@ final class Doc
 
             'content' =>  self::$result,
 
-            'THEME' => '/core/view/'. self::$theme,
+            'THEME' => '/core/view'. self::$theme,
 
             'scripts' => self::$scripts,
 

@@ -5,7 +5,7 @@ class View_Admin extends View
     {
         parent::__construct('admin');
 
-        Doc::$theme = 'admin';
+        Doc::$theme = '/admin';
 	}
 
     public function build_alert($message, $type)
