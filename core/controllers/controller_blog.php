@@ -1,22 +1,38 @@
 <?php
 class Controller_Blog extends Controller
 {
-    public function action_show_blog_item($page_name)
-	{
-        //
-	}
+    public function action_index()
+    {
+        /**
+         *Call parent index with needed parameters
+         **/
+        parent::action_index('page-item.tpl', false);
+    }
 
     /**
-     *Hook for availability checking page name like controllers method
+     *Hook for availability checking page name like controller method
      **/
-    public function __get($page_name)
+    public function __call($page_name, $vars)
     {
+        $this->data = $this->model->get_data();
+
+        $page_name = str_replace('.html', '', str_replace('action_', '', $page_name));
+
         if (isset($this->data['page-items']) && isset($this->data['page-items'][$page_name])) {
 
-            $this->action_show_blog_item($page_name);
+            return $this->action_show_pageitem($page_name);
 
-            return true;
-        }
+        } else Route::Page404();
     }
+
+    public function action_show_pageitem($page_name)
+	{
+        if (isset($this->data['page-items']) && isset($this->data['page-items'][$page_name])) {
+
+            foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data[$meta_tag];
+
+            $this->view->generate($this->data['page-items'][$page_name]['template'], $this->data['page-items'][$page_name]['data']);
+        }
+	}
 }
 ?>

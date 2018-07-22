@@ -3,26 +3,26 @@ abstract class Model
 {
     protected $folder;
 
-    public final function get_data()
+    public final function get_data($sort_sub = false)
     {
+        $data = array();
+
         $data_file = ROOT . '/database/'.$this->folder.'/data.json';
 
         if (file_exists($data_file)) {
 
             $data = json_decode(file_get_contents($data_file), true);
 
-            foreach (array('metatitle' ,'keywords' , 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $data[$meta_tag];
-
-            $sub_data = $this->get_page_items();
+            $sub_data = $this->get_page_items($sort_sub);
 
             if (count($sub_data)) $data['page-items'] = $sub_data;
 
-        } else $data = array( 'template' => 'error.tpl', 'data' => array( 'content' => 'Страница не найдена' ) );
+        }
 
         return $data;
     }
 
-    private final function get_page_items($sort = false)
+    private final function get_page_items($sort)
     {
         $data = array();
 

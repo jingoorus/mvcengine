@@ -12,7 +12,7 @@
                 <label class="login-field-icon fui-lock" for="login-pass"></label>
             </div>
 
-            <a class="btn btn-primary btn-lg btn-block" href="#" onclick="$(this).closest('form').submit()">Log in</a>
+            <input type="submit" class="btn btn-primary btn-lg btn-block" value="Log in">
             <a class="login-link" href="/admin/lostpassword/">Lost your password?</a>
         </form>
     </div>

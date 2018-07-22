@@ -138,7 +138,7 @@ class Controller_Admin extends Controller
 			    Doc::$metainfo['info'] = $this->view->build_alert('Success', 'success');
 
 			} elseif (Query::$get['info'] == 'err')
-			    Doc::$metainfo['info'] = $this->view->build_alert(Query::$get['error'], 'info');
+			    Doc::$metainfo['info'] = $this->view->build_alert('Done with error: ' . urldecode(Query::$get['error']), 'info');
 		}
 
 		foreach ($this->model->database as $page_name => $page_data)
@@ -289,12 +289,12 @@ class Controller_Admin extends Controller
 
 		if ($post_data['controllers_name'] != $post_data['controller_current'])
 		{
-			$constructor_errors[] = $this->admin->write_controller($page, $post_data['controllers_name']);
+			$constructor_class = $this->admin->write_controller($page, $post_data['controllers_name']);
 		}
 
 		if ($post_data['models_name'] != $post_data['model_current'])
 		{
-			$constructor_errors[] = $this->admin->write_model($page, $post_data['models_name']);
+			$constructor_model = $this->admin->write_model($page, $post_data['models_name']);
 		}
 
 		Event::trigger('admin.savepage.before', array('page' => $page, 'data.json' => $data_file, 'action'=>$action));
@@ -303,15 +303,21 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.savepage.after', array('page' => $page, 'data.json' => $data_file, 'result' => $result, 'action'=>$action));
 
-		if ($result === true && !count($constructor_errors)) {
+		if ($result === true && (!$constructor_class || $constructor_class === true) && (!$constructor_model || $constructor_model === true)) {
 
 		    header('Location: /admin/editpages/?info=ok');
 
-		} elseif ($result === true && count($constructor_errors)) {
+		} elseif ($result === true && ($constructor_class !== true || $constructor_model !== true)) {
 
-			$constructor_errors = implode(', ' . $constructor_errors);
+			if ($constructor_class === false) $errors .= 'constructor class not started';
+			elseif ($constructor_class !== true) $errors .= $constructor_class;
 
-			header('Location: /admin/editpages/?info=err&error=' . urlencode($constructor_errors));
+			if($errors) $errors .= ', ';
+
+			if ($constructor_model == false) $errors .= 'constructor model not started';
+			elseif ($constructor_model !== true) $errors .= $constructor_model;
+
+			header('Location: /admin/editpages/?info=err&error=' . urlencode($errors));
 
 		} else {
 
@@ -812,7 +818,7 @@ class Controller_Admin extends Controller
 					'button' => ''
 			    )
 		    );
-		} 
+		}
 	}
 
     public function action_saveuser()

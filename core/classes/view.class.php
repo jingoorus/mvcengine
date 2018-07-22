@@ -29,7 +29,7 @@ class View extends Template
 
 	public function build_document()
 	{
-        Doc::$result = $this->result['content'];
+        Doc::compile($this->result['content']);
 
         $this->global_clear();
 	}

@@ -7,13 +7,13 @@ final class Doc
 
 	public static $metainfo = array('metatitle' => '', 'keywords' => '', 'description' => '');
 
-    public static $result = array();
-
-    public static $scripts = array();
-
-    public static $styles = array();
-
     public static $theme = '';
+
+    private static $result = '';
+
+    private static $scripts = array();
+
+    private static $styles = array();
 
     public static function echo_document()
     {
@@ -45,6 +45,21 @@ final class Doc
         unset($view);
 
         echo self::$result;
+    }
+
+    public static function add_styles($path)
+    {
+        self::$styles[] = $path;
+    }
+
+    public static function add_scripts($path)
+    {
+        self::$scripts[] = $path;
+    }
+
+    public static function compile($result)
+    {
+        self::$result .= $result;
     }
 
     public static function echo_xhttp()

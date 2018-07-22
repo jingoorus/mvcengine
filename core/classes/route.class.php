@@ -95,7 +95,7 @@ final class Route
 		    $controller = new Controller_Standart;
 		}
 
-		if ( method_exists($controller, $action) ) {
+		if ( is_callable(array($controller, $action)) ) {
 
 			Event::trigger('route.action.execute.before', $action);
 

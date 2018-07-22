@@ -22,7 +22,7 @@ include 'core/classes/document.class.php';
 include 'core/classes/dictionary.class.php';
 /**
   *Extension loader for frontend classes (in admin mode classes loaded automaticaly by spl_autoload from 'library' folder)
-  *Extension class load first extensions folder, then library, because user might be rewrite any classes by self
+  *Extension class first check extensions folder, then library, because user might be rewrite any classes by self
   **/
 include 'core/classes/extension.class.php';
 

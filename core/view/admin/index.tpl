@@ -20,7 +20,7 @@
         <nav class="navbar navbar-inverse" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01"><span class="sr-only">Свернуть</span></button>
-                <a class="navbar-brand" href="https://github.com/jingoorus/mvcengine" target="_blank">JMVC 0.2</a>
+                <a class="navbar-brand" href="https://github.com/jingoorus/mvcengine" target="_blank">JMVC 0.3</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
                 <ul class="nav navbar-nav">
