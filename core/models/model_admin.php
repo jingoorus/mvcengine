@@ -44,5 +44,34 @@ class Model_Admin
             }
         }
     }
+
+    public function save_page($page_name, $data, $file_name)
+    {
+        if (!is_dir(ROOT. '/database/' . $page_name)) {
+
+            if (!mkdir(ROOT. '/database/' . $page_name)) return false;
+
+        }
+
+        if (file_put_contents( ROOT. '/database/' . $page_name . '/' .
+        $file_name, $data)){
+
+            return true;
+
+        } else return false;
+    }
+
+    public function save_users($users)
+    {
+        $users = json_encode($users, JSON_UNESCAPED_UNICODE);
+
+        if(file_put_contents( ROOT . '/database/users.json', $users)) return true;
+        else return false;
+    }
+
+    public function get_users()
+    {
+        return json_decode( file_get_contents(ROOT . '/database/users.json'), true );
+    }
 }
 ?>

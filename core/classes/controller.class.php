@@ -24,7 +24,13 @@ abstract class Controller
 	{
 		$this->data = $this->model->get_data($sort_sub);
 
-		if (!count($this->data)) Route::Page404();
+		if (!count($this->data)) {
+
+			Route::Page404();
+
+			$this->data = array('template' => 'error.tpl', 'data' => array('content' => 'Page not found'));
+
+		}
 
 		foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data[$meta_tag];
 

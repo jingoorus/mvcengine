@@ -248,6 +248,8 @@ class Controller_Admin extends Controller
 
     public function action_savepage()
 	{
+		$this->model = new Model_Admin;
+
 		if (!isset(Query::$get['page']) && !isset(Query::$post)) Route::page404('page name empty');
 
 		if (isset(Query::$get['page']) &&  Query::$get['page'] != '') {
@@ -299,7 +301,7 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.savepage.before', array('page' => $page, 'data.json' => $data_file, 'action'=>$action));
 
-		$result = $this->admin->save_page($page, 'data.json', json_encode($data_file, JSON_UNESCAPED_UNICODE));
+		$result = $this->model->save_page($page, json_encode($data_file, JSON_UNESCAPED_UNICODE), 'data.json');
 
 		Event::trigger('admin.savepage.after', array('page' => $page, 'data.json' => $data_file, 'result' => $result, 'action'=>$action));
 
@@ -425,6 +427,8 @@ class Controller_Admin extends Controller
 
 	public function action_savepageitem()
 	{
+		$this->model = new Model_Admin;
+
 		if (!isset(Query::$get['page']) && !isset(Query::$post)) Route::page404('page name empty');
 
 		if (isset(Query::$get['page']) &&  Query::$get['page'] != '') {
@@ -470,7 +474,7 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.savepageitem.before', array('page' => $page, $item . '.json' => $data_file, 'action'=>$action));
 
-		$result = $this->admin->save_page($page, $item . '.json', json_encode($data_file, JSON_UNESCAPED_UNICODE));
+		$result = $this->model->save_page($page, json_encode($data_file, JSON_UNESCAPED_UNICODE), $item . '.json');
 
 		Event::trigger('admin.savepageitem.after', array('page' => $page, $item . '.json' => $data_file, 'result' => $result, 'action'=>$action));
 
@@ -823,6 +827,8 @@ class Controller_Admin extends Controller
 
     public function action_saveuser()
 	{
+		$this->model = new Model_Admin;
+
 		$users = $this->admin->get_users();
 
 		foreach (Query::$post as $key => $value) {
@@ -836,9 +842,7 @@ class Controller_Admin extends Controller
 			break;
 		}
 
-		$users = json_encode($users, JSON_UNESCAPED_UNICODE);
-
-		if (file_put_contents( ROOT . '/database/users.json', $users)) {
+		if ($this->model->save_users($users)) {
 
 			if ($_SESSION['user_name'] == $user) $_SESSION['user_password'] = $password;
 

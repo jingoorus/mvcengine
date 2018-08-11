@@ -270,27 +270,6 @@ final class Admin_Control
         } else return $path . ':  file not exists';
     }
 
-    public function save_page($page_name, $file_name, $data)
-    {
-        if (!is_dir(ROOT. '/database/' . $page_name)) {
-
-            if (!mkdir(ROOT. '/database/' . $page_name)) return false;
-
-        }
-
-        if (file_put_contents( ROOT. '/database/' . $page_name . '/' .
-        $file_name, $data)){
-
-            return true;
-
-        } else return false;
-    }
-
-    private function get_convert($file)
-    {
-        return json_decode( file_get_contents($file), true );
-    }
-
     public function get_languages()
     {
         $langs = array();
@@ -305,19 +284,11 @@ final class Admin_Control
         return $langs;
     }
 
-    public function get_users()
-    {
-        return $this->get_convert(ROOT . '/database/users.json');
-    }
-
-    public function get_config()
-    {
-        return $this->get_convert(ROOT . '/database/config.json');
-    }
-
     private function auth()
     {
-        $users = $this->get_users();
+        $model = new Model_Admin;
+
+        $users = $model->get_users();
 
         if ($_SESSION && $_SESSION['user_name'] != ''
         && $_SESSION['user_password'] != '') {
@@ -339,6 +310,11 @@ final class Admin_Control
                 $this->login = true;
             }
         }
+    }
+
+    public function get_config()
+    {
+        return json_decode( file_get_contents(ROOT . '/database/config.json'), true );
     }
 
     public function __get($property)

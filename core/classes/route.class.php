@@ -119,6 +119,8 @@ final class Route
 	{
 		$method = self::$controller;
 
+		Doc::$headers[] = 'Content-Type: application/json';
+
 		$api = new Extension('Api');
 
 		if ( method_exists($api, $method) ) {
@@ -131,15 +133,13 @@ final class Route
 		Doc::echo_xhttp();
 	}
 
-	public static function Page404($message = false)
+	public static function Page404($message)
 	{
-	    if ($message === false) $message = 'somthing went wrong';
+		Doc::$headers[] = 'HTTP/1.0 404 Not Found';
 
-		/*$logs = new Logs;
+		Doc::$headers[] = 'Status: 404 Not Found';
 
-		$logs->logging(debug_backtrace());*/
-
-        die('Died: '.$message);
+		if($message) echo $message;
     }
 }
 ?>

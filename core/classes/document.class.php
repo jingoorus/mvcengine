@@ -1,7 +1,7 @@
 <?php
 final class Doc
 {
-    public static $header = array();
+    public static $headers = array();
 
     public static $errors = array();
 
@@ -71,12 +71,7 @@ final class Doc
 
     private static function compile_headers()
     {
-        $regular_headers = array();
-
-        if (count(self::$header) > 0) self::$header = array_merge(self::$header, $regular_header);
-
-        //spawn headers here
-
+        foreach(self::$headers as $header) header($header);
     }
 }
 ?>
