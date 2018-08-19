@@ -6,7 +6,16 @@ class Controller_Blog extends Controller
         /**
          *Call parent index with needed parameters
          **/
-        parent::action_index('page-item.tpl', false);
+        parent::action_index('page-item.tpl', function ($a, $b) {
+
+            $da = strtotime($a['data']['date']);
+
+            $db = strtotime($b['data']['date']);
+
+            if ($da == $db) return 0;
+
+            return ($da > $db) ? -1 : 1;
+        });
     }
 
     /**
