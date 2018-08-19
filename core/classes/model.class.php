@@ -33,7 +33,7 @@ abstract class Model
             $data[str_ireplace('.json', '', str_ireplace(ROOT . '/database/'.$this->folder.'/', '', $file_path))] = json_decode(file_get_contents($file_path), true);
         }
 
-        if ($sort !== false) usort($data, $sort);
+        if ($sort !== false) uasort($data, $sort);
 
         return $data;
     }
