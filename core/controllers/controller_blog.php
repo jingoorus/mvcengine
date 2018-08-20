@@ -38,7 +38,7 @@ class Controller_Blog extends Controller
 	{
         if (isset($this->data['page-items']) && isset($this->data['page-items'][$page_name])) {
 
-            foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data[$meta_tag];
+            foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data['page-items'][$page_name][$meta_tag];
 
             $this->view->generate($this->data['page-items'][$page_name]['template'], $this->data['page-items'][$page_name]['data']);
         }
