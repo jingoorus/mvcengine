@@ -5,7 +5,7 @@
 # A lot of thank and plus to karma - for bootstrap, summernote, flat-ui and habrahabr
 #
 # Folders structure:
- #*core - all engine files
+ *core - all engine files
 # **classes - core classes
 # **controllers - MV(C)
 # **events - events files for "class Event"
