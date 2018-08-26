@@ -5,13 +5,13 @@
 # A lot of thank and plus to karma - for bootstrap, summernote, flat-ui and habrahabr
  
 # Folders structure:
- *core - all engine files
- **classes - core classes
- **controllers - MV(C)
- **events - events files for "class Event"
- **models - (M)VC
- **view - M(V)C
- **library - additional tools (spl_autoload folder for admin zone - "classname.class.php" and autoload folder for "class Extension")
- *database - json text based database
- *extensions - autoload folder for "class Extension"
+ *core - all engine files<br />
+ **classes - core classes<br />
+ **controllers - MV(C)<br />
+ **events - events files for "class Event"<br />
+ **models - (M)VC<br />
+ **view - M(V)C<br />
+ **library - additional tools (spl_autoload folder for admin zone - "classname.class.php" and autoload folder for "class Extension")<br />
+ *database - json text based database<br />
+ *extensions - autoload folder for "class Extension"<br />
  *uploads
