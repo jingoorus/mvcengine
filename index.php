@@ -27,4 +27,4 @@ include 'core/classes/dictionary.class.php';
 include 'core/classes/extension.class.php';
 
 Route::index();
-?>
+
