@@ -108,6 +108,10 @@ final class Template
 
     final public function compile($tpl)
     {
+        $find = [];
+
+        $replace = [];
+
         foreach ($this->data as $key_find => $key_replace) {
 
             $find[] = $key_find;
@@ -115,7 +119,10 @@ final class Template
             $replace[] = $key_replace;
         }
 
-        $this->current_template = str_replace($find, $replace, $this->current_template);
+        if (count($find) && count($replace)) {
+
+            $this->current_template = str_replace($find, $replace, $this->current_template);
+        }
 
         if (isset($this->result[$tpl])) {
 
