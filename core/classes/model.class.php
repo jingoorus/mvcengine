@@ -22,7 +22,7 @@ abstract class Model
         return $data;
     }
 
-    private final function get_page_items($sort)
+    private function get_page_items($sort)
     {
         $data = array();
 

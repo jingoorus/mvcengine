@@ -6,4 +6,3 @@ class Model_Main extends Model
         $this->folder = 'main';
     }
 }
-?>

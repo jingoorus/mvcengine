@@ -27,7 +27,7 @@ abstract class Controller
 	{
 		$this->data = $this->model->get_data($sort_sub);
 
-		if (!count($this->data)) {
+		if (!empty($this->data)) {
 
 			Route::Page404();
 
@@ -37,7 +37,7 @@ abstract class Controller
 
 		foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data[$meta_tag];
 
-		if (count($this->data['page-items'])) {
+		if (!empty($this->data['page-items'])) {
 
 			foreach ($this->data['page-items'] as $sub_page_name => $sub_page_data){
 
