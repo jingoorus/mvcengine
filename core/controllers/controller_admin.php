@@ -435,12 +435,13 @@ class Controller_Admin extends Controller
 	{
 		$this->model = new Model_Admin;
 
-		if (!empty(Query::get('page')) && !empty(Query::post())) {
+		if (empty(Query::get('page'))
+			&& empty(Query::post())) {
 
 			Route::page404('page name empty');
 		}
 
-		if (empty(Query::get('page')) &&  Query::get('page') != '') {
+		if (!empty(Query::get('page'))) {
 
 			$page = Query::get('page');
 
