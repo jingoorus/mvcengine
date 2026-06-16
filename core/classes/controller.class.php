@@ -27,7 +27,7 @@ abstract class Controller
 	{
 		$this->data = $this->model->get_data($sort_sub);
 
-		if (!empty($this->data)) {
+		if (empty($this->data)) {
 
 			Route::Page404();
 
