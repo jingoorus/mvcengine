@@ -36,7 +36,7 @@ class Controller_Admin extends Controller
 		if ($this->admin->login === false && $_SERVER['REQUEST_URI'] != '/admin/') header('Location: /admin/');
 	}
 
-    public function action_index($sub_tpl, $sort_sub)
+    public function action_index($sub_tpl = 'page-item.tpl', $sort_sub = false)
 	{
 		if ($this->admin->login === false) {
 
