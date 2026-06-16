@@ -296,8 +296,8 @@ final class Admin_Control
             if ($users[$_SESSION['user_name']] == $_SESSION['user_password'])
                 $this->login = true;
 
-        } elseif (Query::post('user_name') != ''
-                  && Query::post('user_password') != '') {
+        } elseif (!empty(Query::post('user_name') )
+                  &&  !empty(Query::post('user_password'))) {
 
             $password = md5(Query::post('user_password'));
 

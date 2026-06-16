@@ -36,7 +36,7 @@ final class Query
 
 	public static function get($prop = null)
 	{
-		if (!empty($prop) && !empty(self::$get[$prop])) {
+		if (!empty($prop)) {
 
 			if (!empty(self::$get[$prop])) {
 
@@ -51,7 +51,7 @@ final class Query
 
 	public static function post($prop = null)
 	{
-		if (!empty($prop) && !empty(self::$post[$prop])) {
+		if (!empty($prop)) {
 
 			if (!empty(self::$post[$prop])) {
 

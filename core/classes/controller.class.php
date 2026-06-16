@@ -23,9 +23,9 @@ abstract class Controller
 		}
 	}
 
-    public function action_index($sub_tpl = 'page-item.tpl', $sort_sub = false)
+    public function action_index($sub_tpl, $sort_sub)
 	{
-		$this->data = $this->model->get_data($sort_sub);
+		$this->data = $this->model->get_data($sort_sub ?? false);
 
 		if (empty($this->data)) {
 
