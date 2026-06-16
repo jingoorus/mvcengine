@@ -271,7 +271,7 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.savepage.init', array('action'=>$action, 'page'=>$page));
 
-		$post_data = Query::post;
+		$post_data = Query::post();
 
 		$data_file = array(
 
