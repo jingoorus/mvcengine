@@ -27,7 +27,7 @@ final class Doc
 
             'content' =>  self::$result,
 
-            'THEME' => '/core/view'. self::$theme,
+            'THEME' => '/view/'. self::$theme,
 
             'scripts' => self::$scripts,
 
@@ -38,11 +38,11 @@ final class Doc
 
         $view->generate('index.tpl', $data, 'document');
 
-        self::$result = $view->result['document'];
+        self::$result = $view->get('document');
 
         self::compile_headers();
 
-        unset($view);
+        //unset($view);
 
         echo self::$result;
     }
@@ -57,7 +57,7 @@ final class Doc
         self::$scripts[] = $path;
     }
 
-    public static function compile($result)
+    public static function addResult($result)
     {
         self::$result .= $result;
     }
@@ -71,7 +71,9 @@ final class Doc
 
     private static function compile_headers()
     {
-        foreach(self::$headers as $header) header($header);
+        foreach(self::$headers as $header) {
+
+            header($header);
+        }
     }
 }
-?>

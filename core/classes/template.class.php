@@ -1,112 +1,138 @@
 <?php
-abstract class Template
+
+final class Template
 {
-	protected $dir = ROOT . '/core/view/';
+    protected $dir = ROOT . '/view/';
 
-	private $template = null;
+    protected $theme = '';
 
-	private $current_template = null;
+    private $template = null;
 
-	protected $data = array();
+    private $current_template = null;
 
-	protected $result = array();
+    protected $data = array();
 
-	final protected function load_template($tpl_name)
+    protected $result = array();
+
+    public function __construct($theme)
     {
-		$url = @parse_url ( $tpl_name );
+        $this->theme = $theme;
+    }
 
-		$tpl_name = pathinfo( $url['path'] );
-
-		$tpl_name = $tpl_name['basename'];
-
-		$type = explode( '.', $tpl_name );
-
-		$type = strtolower( end( $type ) );
-
-		if ( $type != 'tpl' ) return 'only ".tpl" extension allowed';
-
-		if ( $tpl_name == '' ) {
-
-			echo 'Incorrect or blank template name: ' . $tpl_name;
-
-			return false;
-
-		} elseif (!file_exists( $this->dir . $tpl_name ) ) {
-
-		    echo 'Template not found: ' . $tpl_name;
-
-		    return false;
-		}
-
-		$this->template = file_get_contents( $this->dir . $tpl_name );
-
-		//if (strpos($this->template, '{foreach:') !== false) $this->template = preg_replace_callback("#\\{foreach:(.*?)\\}#si", array(&$this, 'do_foreach'), $this->template );
-
-		$this->current_template = $this->template;
-
-		return true;
-	}
-
-	final protected function set($name, $var)
+    final public function load_template($tpl_name)
     {
-		if( is_array( $var ) && count( $var ) ) {
+        $url = @parse_url($tpl_name);
 
-			foreach ( $var as $key => $key_var ) {
+        $tpl_name = pathinfo($url['path']);
 
-				$this->set( $key, $key_var );
+        $tpl_name = $tpl_name['basename'];
 
-			}
+        $type = explode('.', $tpl_name);
 
-		} else
-			$this->data[$name] = $var;
-	}
+        $type = strtolower(end($type));
 
-	final protected function _clear()
+        if ($type != 'tpl') return 'only ".tpl" extension allowed';
+
+        if ($tpl_name == '') {
+
+            echo 'Incorrect or blank template name: ' . $tpl_name;
+
+            return false;
+
+        } elseif (!file_exists($this->dir . $this->theme . '/' . $tpl_name)) {
+
+            echo 'Template not found: ' . $tpl_name;
+
+            return false;
+        }
+
+        $this->template = file_get_contents($this->dir . $this->theme . '/' . $tpl_name);
+
+        //if (strpos($this->template, '{foreach:') !== false) $this->template = preg_replace_callback("#\\{foreach:(.*?)\\}#si", array(&$this, 'do_foreach'), $this->template );
+
+        $this->current_template = $this->template;
+
+        return true;
+    }
+
+    final public function set($name, $var)
     {
-		$this->data = array();
+        if (is_array($var) && count($var)) {
 
-		$this->current_template = $this->template;
-	}
+            foreach ($var as $key => $key_var) {
 
-	final protected function clear()
+                $this->set($key, $key_var);
+
+            }
+
+        } else
+            $this->data[$name] = $var;
+    }
+
+    public function __get($property)
     {
-		$this->data = array();
+        if (property_exists($this, $property)) {
 
-		$this->current_template = null;
+            return $this->$property;
+        }
 
-		$this->template = null;
-	}
+        return null;
+    }
 
-	final protected function global_clear()
+    final public function _clear()
     {
-		$this->data = array ();
+        $this->data = array();
 
-		$this->result = array ();
+        $this->current_template = $this->template;
+    }
 
-		$this->current_template = null;
-
-		$this->template = null;
-	}
-
-	final protected function compile($tpl)
+    final public function clear()
     {
-		foreach ( $this->data as $key_find => $key_replace ) {
+        $this->data = array();
 
-			$find[] = $key_find;
+        $this->current_template = null;
 
-			$replace[] = $key_replace;
-		}
+        $this->template = null;
+    }
 
-		$this->current_template = str_replace( $find, $replace, $this->current_template );
+    final public function global_clear()
+    {
+        $this->data = array();
 
-		if( isset( $this->result[$tpl] ) ) {
+        $this->result = array();
 
-		    $this->result[$tpl] .= $this->current_template;
+        $this->current_template = null;
 
-		} else
-		    $this->result[$tpl] = $this->current_template;
+        $this->template = null;
+    }
 
-		$this->_clear();
-	}
+    final public function compile($tpl)
+    {
+        foreach ($this->data as $key_find => $key_replace) {
+
+            $find[] = $key_find;
+
+            $replace[] = $key_replace;
+        }
+
+        $this->current_template = str_replace($find, $replace, $this->current_template);
+
+        if (isset($this->result[$tpl])) {
+
+            $this->result[$tpl] .= $this->current_template;
+
+        } else {
+
+            $this->result[$tpl] = $this->current_template;
+        }
+
+        $this->_clear();
+
+        return $this->result;
+    }
+
+    public function getTheme()
+    {
+        return $this->theme;
+    }
 }
-?>

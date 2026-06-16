@@ -1,58 +1,89 @@
 <?php
 final class Route
 {
-	protected static $errors = array();
+	protected static $errors = [];
 
-	public static $routes = array();
+	public static $routes = [];
 
 	public static $controller = 'Main';
 
 	public static $action = 'index';
 
-	public static function index()
+	public static function exec()
 	{
-		if ( strpos($_SERVER['REQUEST_URI'], '?') !== false ) {
+		if (strpos($_SERVER['REQUEST_URI'], '?') !== false) {
 
 			$request = explode('?', $_SERVER['REQUEST_URI']);
 
 			$request = $request[0];
 
-		} else $request = $_SERVER['REQUEST_URI'];
+		} else {
+
+			$request = $_SERVER['REQUEST_URI'];
+		}
 
 		self::$routes = $request == '/' ? self::$routes : explode('/', $request);
 
-		if ( !empty(self::$routes[1]) ) self::$controller = self::$routes[1];
+		array_shift(self::$routes);
 
-		if ( !empty(self::$routes[2]) ) self::$action = self::$routes[2];
+		foreach (self::$routes as &$route) {
+
+			$route = preg_replace('#[^\w]#', '', $route);
+
+		}
+
+		if (!empty(self::$routes[0])) {
+
+			self::$controller = self::$routes[0];
+		}
+
+		if (!empty(self::$routes[1])) {
+
+			self::$action = self::$routes[1];
+		}
 
 		Event::load_events(self::$controller);
 
 		Event::trigger('route.getdata.convert.before');
 
-		if ( $_SERVER['QUERY_STRING'] != '' ) {
+		$query_array = [];
+
+		if ($_SERVER['QUERY_STRING'] != '') {
+
+			$_SERVER['QUERY_STRING'] = preg_replace('#[^\w\=\&]#', '', $_SERVER['QUERY_STRING']);
 
 			parse_str($_SERVER['QUERY_STRING'], $query_array);
-
-			Query::$get = $query_array;
 
 			$_SERVER['QUERY_STRING'] = '';
 		}
 
+		unset($_GET);
+
 		Event::trigger('route.postdata.convert.before');
 
-		if ( $_POST ) Query::$post = $_POST;
+		$post_array = [];
 
-		$_GET = array();
+		if ($_POST) {
 
-		$_POST = array();
+			$post_array = $_POST;
 
-		$_REQUEST = array();
+			unset($_POST);
+		}
+
+		new Query($query_array, $post_array);
+
+		unset($_REQUEST);
 
 		$request_headers = getallheaders();
 
 		if ($request_headers['X-Requested-With'] == 'XMLHttpRequest') {
 
 			Event::trigger('route.xhttp.switch.before');
+
+			if (file_get_contents('php://input')) {
+
+				new Query($query_array, json_decode(file_get_contents('php://input')));
+			}
 
 			self::xhttp();
 
@@ -78,7 +109,7 @@ final class Route
 
 		$controller_path = ROOT . '/core/controllers/'.strtolower($controller_name).'.php';
 
-		if ( file_exists($controller_path) ) {
+		if (file_exists($controller_path)) {
 
 			include $controller_path;
 
@@ -125,10 +156,12 @@ final class Route
 
 		if ( method_exists($api, $method) ) {
 
-			Doc::$result = $api->$method(self::$action);
+			Doc::addResult($api->$method(self::$action));
 
-		} else
-		    Doc::$result = array('answer'=>'error','data'=>'method not exists');
+		} else {
+
+			Doc::addResult(['answer'=>'error','data'=>'method not exists']);
+		}
 
 		Doc::echo_xhttp();
 	}

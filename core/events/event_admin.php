@@ -9,7 +9,7 @@ Event::bind('admin.editpage.init', function($page_name){
 
 Event::bind('admin.savepage.init', function($page_name){
 
-    $post = Query::$post;
+    $post = Query::post();
 
     if ($post['event_data'] && $post['event_data'] != '') file_put_contents(ROOT . '/core/events/event_'.$page_name.'.php', $post['event_data']);
 
@@ -17,8 +17,8 @@ Event::bind('admin.savepage.init', function($page_name){
 
 Event::bind('admin.editpageitem.init', function($page_name){
 
-    //Query::$get;
-    //Query::$post;
+    //Query::get();
+    //Query::post();
     //Route::$controller;
     //Route::$model;
     //Route::$routes;
@@ -28,11 +28,10 @@ Event::bind('admin.editpageitem.init', function($page_name){
 
 Event::bind('admin.savepageitem.init', function($page_name){
 
-    //Query::$get;
-    //Query::$post;
+    //Query::get();
+    //Query::post();
     //Route::$controller;
     //Route::$model;
     //Route::$routes;
 
 });
-?>

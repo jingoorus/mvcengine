@@ -63,8 +63,8 @@ final class Admin_Control
             ),
         'model-standart');
 
-        $this->controller_list = $this->view->result['controller-standart'].
-        $this->view->result['controller-list'].
+        $this->controller_list = $this->view->get('controller-standart').
+        $this->view->get('controller-list').
         $this->view->tag('input',
             array(
                 'type' => 'hidden',
@@ -73,8 +73,8 @@ final class Admin_Control
             ), '', false
         );
 
-        $this->model_list = $this->view->result['model-standart'].
-        $this->view->result['model-list'].
+        $this->model_list = $this->view->get('model-standart').
+        $this->view->get('model-list').
         $this->view->tag('input',
             array(
                 'type' => 'hidden',
@@ -291,19 +291,19 @@ final class Admin_Control
         $users = $model->get_users();
 
         if ($_SESSION && $_SESSION['user_name'] != ''
-        && $_SESSION['user_password'] != '') {
+            && $_SESSION['user_password'] != '') {
 
             if ($users[$_SESSION['user_name']] == $_SESSION['user_password'])
                 $this->login = true;
 
-        } elseif (Query::$post['user_name'] != ''
-        && Query::$post['user_password'] != '') {
+        } elseif (Query::post('user_name') != ''
+                  && Query::post('user_password') != '') {
 
-            $password = md5(Query::$post['user_password']);
+            $password = md5(Query::post('user_password'));
 
-            if ($users[Query::$post['user_name']] == $password) {
+            if ($users[Query::post('user_name')] == $password) {
 
-                $_SESSION['user_name'] = Query::$post['user_name'];
+                $_SESSION['user_name'] = Query::post('user_name');
 
                 $_SESSION['user_password'] = $password;
 

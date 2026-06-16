@@ -1,17 +1,22 @@
 <?php
 final class Query
 {
-	static public $get = array();
+	static public $get = [];
 
-	static public $post = array();
+	static public $post = [];
 
-	static public $session = array();
+	static public $session = [];
 
-	static public $server = array();
+	static public $server = [];
 
-	static public $request = array();
+	static public $request = [];
 
-	private function __construct() {}
+	public function __construct($get, $post)
+	{
+		self::$get = $get;
+
+		self::$post = $post;
+	}
 
 	public static function safequery($data)
 	{
@@ -28,6 +33,34 @@ final class Query
 
 		return $data;
 	}
-}
 
-?>
+	public static function get($prop = null)
+	{
+		if (!empty($prop) && !empty(self::$get[$prop])) {
+
+			if (!empty(self::$get[$prop])) {
+
+				return self::$get[$prop];
+			}
+
+			return NULL;
+		}
+
+		return self::$get;
+	}
+
+	public static function post($prop = null)
+	{
+		if (!empty($prop) && !empty(self::$post[$prop])) {
+
+			if (!empty(self::$post[$prop])) {
+
+				return self::$post[$prop];
+			}
+
+			return NULL;
+		}
+
+		return self::$post;
+	}
+}

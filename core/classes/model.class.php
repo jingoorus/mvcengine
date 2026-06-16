@@ -38,4 +38,3 @@ abstract class Model
         return $data;
     }
 }
-?>

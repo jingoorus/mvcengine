@@ -6,4 +6,3 @@ class Controller_Main extends Controller
         parent::__construct();
     }
 }
-?>

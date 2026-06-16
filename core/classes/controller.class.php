@@ -9,7 +9,7 @@ abstract class Controller
 
 	public function __construct()
 	{
-		$this->view = new View;
+		$this->view = new View('default');
 
 		if ( file_exists(ROOT . '/core/models/model_' . strtolower(Route::$controller) . '.php') ) {
 
@@ -17,7 +17,10 @@ abstract class Controller
 
 			$this->model = new $model(Route::$controller);
 
-		} else $this->model = new Model_Standart(Route::$controller);
+		} else {
+
+			$this->model = new Model_Standart(Route::$controller);
+		}
 	}
 
     public function action_index($sub_tpl = 'page-item.tpl', $sort_sub = false)
@@ -44,10 +47,9 @@ abstract class Controller
 
 			}
 
-			$this->data['data']['page-items'] = $this->view->result['page-items'];
+			$this->data['data']['page-items'] = $this->view->get('page-items');
 		}
 
         $this->view->generate($this->data['template'], $this->data['data']);
 	}
 }
-?>

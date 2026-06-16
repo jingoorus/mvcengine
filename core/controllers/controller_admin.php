@@ -58,7 +58,7 @@ class Controller_Admin extends Controller
 
     public function action_editpage()
 	{
-	    $page = Query::$get['page'];
+	    $page = Query::get('page');
 
 		Event::trigger('admin.editpage.init', $page);
 
@@ -109,7 +109,7 @@ class Controller_Admin extends Controller
 
 			'template' => $this->model->database[$page]['data']['template'],
 
-			'content' => $this->view->result['page_data'],
+			'content' => $this->view->get('page_data'),
 
 			'engine' => $this->admin->controller_type,
 
@@ -131,14 +131,14 @@ class Controller_Admin extends Controller
 	{
 	    $this->model = new Model_Admin(true);
 
-		if (Query::$get['info']) {
+		if (Query::get('info')) {
 
-			if (Query::$get['info'] == 'ok'){
+			if (Query::get('info') == 'ok'){
 
 			    Doc::$metainfo['info'] = $this->view->build_alert('Success', 'success');
 
-			} elseif (Query::$get['info'] == 'err')
-			    Doc::$metainfo['info'] = $this->view->build_alert('Done with error: ' . urldecode(Query::$get['error']), 'info');
+			} elseif (Query::get('info') == 'err')
+			    Doc::$metainfo['info'] = $this->view->build_alert('Done with error: ' . urldecode(Query::get('error')), 'info');
 		}
 
 		foreach ($this->model->database as $page_name => $page_data)
@@ -250,24 +250,28 @@ class Controller_Admin extends Controller
 	{
 		$this->model = new Model_Admin;
 
-		if (!isset(Query::$get['page']) && !isset(Query::$post)) Route::page404('page name empty');
+		if (!empty(Query::get('page'))
+			&& !empty(Query::post())) {
 
-		if (isset(Query::$get['page']) &&  Query::$get['page'] != '') {
+			Route::page404('page name empty');
+		}
 
-			$page = Query::$get['page'];
+		if (empty(Query::get('page')) &&  Query::get('page') != '') {
+
+			$page = Query::get('page');
 
 			$action = 'edit';
 
 		} else {
 
-			$page = Query::$post['page-name'];
+			$page = Query::post('page-name');
 
 			$action = 'add';
 		}
 
 		Event::trigger('admin.savepage.init', array('action'=>$action, 'page'=>$page));
 
-		$post_data = Query::$post;
+		$post_data = Query::post;
 
 		$data_file = array(
 
@@ -333,7 +337,7 @@ class Controller_Admin extends Controller
 
     public function action_deletepage()
 	{
-		$page = Query::$get['page'];
+		$page = Query::get('page');
 
 		Event::trigger('admin.deletepage.init', $page);
 
@@ -359,11 +363,13 @@ class Controller_Admin extends Controller
 
 	public function action_editpageitem()
 	{
-		$page = Query::$get['page'];
+		$page = Query::get('page');
+
+		$extension_content = '';
 
 		Event::trigger('admin.editpageitem.init', $page);
 
-		$item = Query::$get['item'];
+		$item = Query::get('item');
 
 		$this->model = new Model_Admin($page);
 
@@ -414,9 +420,9 @@ class Controller_Admin extends Controller
 
 				'template' => $this->model->database[$page][$item]['template'],
 
-				'content' => $this->view->result['page_data'],
+				'content' => $this->view->get('page_data'),
 
-				'extensions' => $this->view->tag('div', array('class'=>'col-xs-12'),$extension_content)
+				'extensions' => $this->view->tag('div', array('class'=>'col-xs-12'), $extension_content)
 			);
 
 			Event::trigger('admin.editpageitem.draw.before', $page);
@@ -429,21 +435,24 @@ class Controller_Admin extends Controller
 	{
 		$this->model = new Model_Admin;
 
-		if (!isset(Query::$get['page']) && !isset(Query::$post)) Route::page404('page name empty');
+		if (!empty(Query::get('page')) && !empty(Query::post())) {
 
-		if (isset(Query::$get['page']) &&  Query::$get['page'] != '') {
+			Route::page404('page name empty');
+		}
 
-			$page = Query::$get['page'];
+		if (empty(Query::get('page')) &&  Query::get('page') != '') {
 
-			$item = Query::$get['item'];
+			$page = Query::get('page');
+
+			$item = Query::get('item');
 
 			$action = 'edit';
 
 		} else {
 
-			$page = Query::$post['page-name'];
+			$page = Query::post('page-name');
 
-			$item = Query::$post['item'];
+			$item = Query::post('item');
 
 			if (strpos($item, '.html') !== false) $item = str_ireplace('.html', '', $item);
 
@@ -452,7 +461,7 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.savepageitem.init', array('action'=>$action, 'page'=>$page));
 
-		$post_data = Query::$post;
+		$post_data = Query::post;
 
 		$data_file = array(
 
@@ -498,7 +507,7 @@ class Controller_Admin extends Controller
 
 		$page_data = array(
 
-			'title' => Query::$get['page'],
+			'title' => Query::get('page'),
 
 			'metatitle' => '',
 
@@ -518,9 +527,9 @@ class Controller_Admin extends Controller
 
 	public function action_deletepageitem()
 	{
-		$page = Query::$get['page'];
+		$page = Query::get('page');
 
-		$item = Query::$get['item'];
+		$item = Query::get('item');
 
 		Event::trigger('admin.deletepageitem.init', $page);
 
@@ -565,7 +574,7 @@ class Controller_Admin extends Controller
 
 					array('action'=>'/admin/savesettings/', 'method'=>'post'),
 
-					$this->view->result['page_data'] .
+					$this->view->get('page_data') .
 					$this->view->tag('div', array('class'=>'row'),
 
 					    $this->view->tag(
@@ -597,7 +606,7 @@ class Controller_Admin extends Controller
 
 	public function action_savesettings()
 	{
-		$data = json_encode(Query::$post['config'], JSON_UNESCAPED_UNICODE);
+		$data = json_encode(Query::post('config'), JSON_UNESCAPED_UNICODE);
 
 		if (file_put_contents( ROOT . '/database/config.json', $data)) {
 
@@ -704,7 +713,7 @@ class Controller_Admin extends Controller
 
 	public function action_edituser()
 	{
-		$user = Query::$get['user'];
+		$user = Query::get('user');
 
 		$user_password = $this->view->tag(
 
@@ -770,7 +779,7 @@ class Controller_Admin extends Controller
 
     public function action_adduser()
 	{
-		if (Query::$get['step'] == 'user_name') {
+		if (Query::get('step') == 'user_name') {
 
 			$this->view->generate('pages-list.tpl',
 
@@ -831,7 +840,7 @@ class Controller_Admin extends Controller
 
 		$users = $this->admin->get_users();
 
-		foreach (Query::$post as $key => $value) {
+		foreach (Query::post() as $key => $value) {
 
 			$user = strip_tags($key);
 

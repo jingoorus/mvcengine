@@ -1,42 +1,46 @@
 <?php
-class View extends Template
+class View
 {
+    private $template = null;
+
+    private $result = [];
+
     public function __construct($theme = '')
     {
-        $this->dir .= $theme != '' ? $theme . '/' : '';
+        $this->template = new Template($theme != '' ? $theme : '');
+
+        Doc::$theme = $theme;
 	}
-
-    public function __get($property)
-    {
-        if (property_exists($this, $property)) return $this->$property;
-
-    }
 
     public function generate($template, $data = null, $compile_tag = 'content')
 	{
-		$this->load_template($template);
+        $this->template->load_template($template);
 
 		if (is_array($data)) {
 
-			foreach($data as $n => $v) $this->set('{'.$n.'}', $v);
+			foreach($data as $n => $v) {
 
+                $this->template->set('{' . $n . '}', $v);
+            }
 		}
 
-        $this->compile($compile_tag);
+        $this->result = $this->template->compile($compile_tag);
 
-        $this->clear();
+        $this->template->clear();
 	}
 
 	public function build_document()
 	{
-        Doc::compile($this->result['content']);
+        Doc::addResult($this->result['content']);
 
-        $this->global_clear();
+        $this->template->global_clear();
 	}
 
     public function tag($tag_name, $property = array(), $content = '', $close_tag = true)
     {
         $close_tag = $close_tag === true ? '</'.$tag_name.'>' : '' ;
+
+        $properties = '';
 
         if (is_array($property) && count($property) > 0)
         {
@@ -44,10 +48,13 @@ class View extends Template
             {
                 $properties .= ' '.$name.'="'.$value.'"';
             }
-
-        } else $properties = '';
+        }
 
         return '<'.$tag_name.$properties.'>'.$content.$close_tag;
     }
+
+    public function get($property)
+    {
+        return $this->result[$property] ?? null;
+    }
 }
-?>
