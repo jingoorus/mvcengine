@@ -1,0 +1,7 @@
+.gitignore
+database/
+view/default
+core/controllers/
+core/events/
+core/models/
+extensions/
