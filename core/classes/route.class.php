@@ -98,9 +98,9 @@ final class Route
 
     private static function http()
     {
-        $model_name = 'Model_' . self::$controller;
+        $model_name = 'Model_' . ucfirst(self::$controller);
 
-        $controller_name = 'Controller_' . self::$controller;
+        $controller_name = 'Controller_' . ucfirst(self::$controller);
 
         $action = 'action_' . self::$action;
 
