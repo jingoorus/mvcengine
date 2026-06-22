@@ -1,7 +1,12 @@
 .gitignore
 database/*
+view/default
 view/default/*
+core/controllers
 core/controllers/*
+core/events
 core/events/*
+core/models
 core/models/*
-extensions/**
+extensions
+extensions/*
