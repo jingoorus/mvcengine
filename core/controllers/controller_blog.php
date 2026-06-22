@@ -1,6 +1,11 @@
 <?php
 class Controller_Blog extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct('default');
+    }
+
     public function action_index()
     {
         /**
@@ -27,18 +32,24 @@ class Controller_Blog extends Controller
 
         $page_name = str_replace('.html', '', str_replace('action_', '', $page_name));
 
-        if (isset($this->data['page-items']) && isset($this->data['page-items'][$page_name])) {
+        if (isset($this->data['page-items'][$page_name])) {
 
-            return $this->action_show_pageitem($page_name);
+            $this->action_show_pageitem($page_name);
 
-        } else Route::Page404();
+        } else {
+
+            Route::Page404();
+        }
     }
 
     public function action_show_pageitem($page_name)
 	{
         if (isset($this->data['page-items']) && isset($this->data['page-items'][$page_name])) {
 
-            foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data['page-items'][$page_name][$meta_tag];
+            foreach (array('metatitle', 'keywords', 'description') as $meta_tag) {
+
+                Doc::setMeta([$meta_tag => $this->data['page-items'][$page_name][$meta_tag]]);
+            }
 
             $this->view->generate($this->data['page-items'][$page_name]['template'], $this->data['page-items'][$page_name]['data']);
         }

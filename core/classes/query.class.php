@@ -11,11 +11,44 @@ final class Query
 
 	static public $request = [];
 
-	public function __construct($get, $post)
+	public function __construct()
 	{
-		self::$get = $get;
+        Event::trigger('route.getdata.convert.before');
 
-		self::$post = $post;
+        if (!empty($_GET)) {
+
+            foreach ($_GET as &$get) {
+
+                $get = preg_replace('#[^\w]#', '', $get);
+            }
+
+            self::$get = $_GET;
+
+            unset($_GET);
+        }
+
+        self::$request = $_REQUEST;
+
+        unset($_REQUEST);
+
+        Event::trigger('route.postdata.convert.before');
+
+        if (getallheaders()['X-Requested-With'] == 'XMLHttpRequest'
+            && !empty(file_get_contents('php://input'))) {
+
+            self::$post = json_decode(file_get_contents('php://input'));
+
+        } elseif (!empty($_POST)) {
+
+            self::$post = $_POST;
+
+            unset($_POST);
+        }
+
+        if (Route::$controller != 'admin') {
+
+            self::$post = self::safequery(self::$post);
+        }
 	}
 
 	public static function safequery($data)
@@ -29,7 +62,10 @@ final class Query
 				$data[strip_tags($key)] = Query::safequery($value);
 			}
 
-		} else $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+		} else {
+
+            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        }
 
 		return $data;
 	}

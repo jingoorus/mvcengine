@@ -1,8 +1,7 @@
 <?php
+
 final class Constructor
 {
-    private static $options = array();
-
     private static $status = false;
 
     public static function build_class($type, $options)
@@ -18,8 +17,7 @@ final class Constructor
             return;
         }
 
-        $options['class_file'] = ROOT . '/core/' . $type . 's/' . $type . '_' .
-        $options['page_name'] . '.php';
+        $options['class_file'] = ROOT . '/core/' . $type . 's/' . $type . '_' . $options['page_name'] . '.php';
 
         $options['page_name'] = mb_convert_case($options['page_name'], MB_CASE_TITLE, "UTF-8");
 
@@ -31,7 +29,10 @@ final class Constructor
 
                 self::$status = true;
 
-            } else self::$status = 'old ' . $type . ' not deleted';
+            } else {
+
+                self::$status = 'old ' . $type . ' has not deleted';
+            }
 
         } else {
 
@@ -64,7 +65,10 @@ final class Constructor
                     )
                 );
 
-            } else self::$status = 'old ' . $type . ' not exists';
+            } else {
+
+                self::$status = 'old ' . $type . ' has not exists';
+            }
         }
     }
 
@@ -72,34 +76,40 @@ final class Constructor
     {
         $origin = file_get_contents($options['parent']);
 
-        if ($origin === false){
+        if ($origin === false) {
 
-            self::$status = 'source ' . $type . ' class have not found';
+            self::$status = 'source ' . $type . ' class has not found';
 
             return;
         }
 
-        $new = preg_replace('#(.+)('.$options['parent_name'].')(.+)#si',
-        '\\1'. mb_convert_case($type, MB_CASE_TITLE, "UTF-8") . '_' .
-        $options['page_name'].'\\3', $origin);
+        $new = preg_replace('#(.+)(' . $options['parent_name'] . ')(.+)#si',
+            '\\1' . mb_convert_case($type, MB_CASE_TITLE, "UTF-8") . '_' .
+            $options['page_name'] . '\\3', $origin);
 
         if (file_put_contents($options['class_file'], $new)) {
 
             self::$status = true;
 
-        } else self::$status = 'cannot create or rewrite ' . $type . ' file';
+        } else {
+
+            self::$status = 'cannot create or rewrite ' . $type . ' file';
+        }
     }
 
     private static function del_file($file)
     {
-        if (file_exists( $file )) {
+        if (file_exists($file)) {
 
-            if(unlink( $file ))
+            if (unlink($file))
                 return true;
             else
                 return false;
 
-        } else return true;
+        } else {
+
+            return true;
+        }
     }
 
     public static function check_status()
@@ -107,4 +117,3 @@ final class Constructor
         return self::$status;
     }
 }
-?>

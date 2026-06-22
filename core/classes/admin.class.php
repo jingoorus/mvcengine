@@ -5,9 +5,9 @@ final class Admin_Control
 
     private $models_folder = ROOT . '/core/models/';
 
-    private $controllers = array();
+    private $controllers = [];
 
-    private $models = array();
+    private $models = [];
 
     private $view;
 
@@ -173,23 +173,27 @@ final class Admin_Control
 
     public function write_controller($page, $copy_controller)
     {
-        $options = array();
+        $options = [];
 
         $this->scan_controllers($page, false);
 
-        $options = array('page_name' => $page,
-        'parent_name' => $copy_controller);
+        $options = [
+            'page_name' => $page,
+            'parent_name' => $copy_controller
+        ];
 
         if (in_array($copy_controller, $this->controllers)) {
 
-            $options['parent'] = $this->controllers_folder .
-            strtolower($copy_controller) . '.php';
+            $options['parent'] = $this->controllers_folder . strtolower($copy_controller) . '.php';
 
         } elseif ($copy_controller == 'Controller_Standart') {
 
             $options['parent'] = ROOT . '/core/classes/controller.standart.class.php';
 
-        } else return 'controller not found';
+        } else {
+
+            return 'controller not found';
+        }
 
         Constructor::build_class('controller', $options);
 
@@ -198,18 +202,21 @@ final class Admin_Control
 
     public function write_model($page, $copy_model)
     {
-        $options = array();
+        $options = [];
 
         $this->scan_models($page, false);
 
         if (in_array($copy_model, $this->models)  ||
         $copy_model == 'Model_Standart') {
 
-            $options = array('parent' => $this->models_folder .
-            strtolower($copy_model) . '.php', 'page_name' => $page,
-            'parent_name' => $copy_model);
+            $options = [
+                'parent' => $this->models_folder . strtolower($copy_model) . '.php', 'page_name' => $page,
+                'parent_name' => $copy_model];
 
-        } else return 'model not found';
+        } else {
+
+            return 'model not found';
+        }
 
         Constructor::build_class('model', $options);
 
@@ -218,7 +225,7 @@ final class Admin_Control
 
     public function delete_folder($path)
     {
-        $errors = array();
+        $errors = [];
 
         $path = ROOT . '/database/' . $path . '/';
 
@@ -238,14 +245,17 @@ final class Admin_Control
 
 					if(file_exists($tmp_path)) {
 
-						if (!unlink($tmp_path)) $errors[] = $tmp_path;
+						if (!unlink($tmp_path)) {
+
+                            $errors[] = $tmp_path;
+                        }
 					}
 				}
 			}
 
 			closedir($dir_handle);
 
-			Event::trigger('admin.deletepage.before', $page);
+			Event::trigger('admin.deletepage.before', $path);
 
 			if (file_exists($path)) {
 
@@ -257,7 +267,7 @@ final class Admin_Control
 
                     $errors[] = $path;
 
-                    return $errors . ', rmdir() failed';
+                    return implode(',', $errors) . ', rmdir() failed';
 
                 } else return 'rmdir() failed';
 
@@ -267,12 +277,15 @@ final class Admin_Control
 
             return $path . ':  isn`t folder';
 
-        } else return $path . ':  file not exists';
+        } else {
+
+            return $path . ':  file not exists';
+        }
     }
 
     public function get_languages()
     {
-        $langs = array();
+        $langs = [];
 
         $lf = ROOT . '/core/language/';
 
@@ -293,8 +306,10 @@ final class Admin_Control
         if ($_SESSION && $_SESSION['user_name'] != ''
             && $_SESSION['user_password'] != '') {
 
-            if ($users[$_SESSION['user_name']] == $_SESSION['user_password'])
+            if ($users[$_SESSION['user_name']] == $_SESSION['user_password']) {
+
                 $this->login = true;
+            }
 
         } elseif (!empty(Query::post('user_name') )
                   &&  !empty(Query::post('user_password'))) {
@@ -319,7 +334,11 @@ final class Admin_Control
 
     public function __get($property)
     {
-        if (property_exists($this, $property)) return $this->$property;
+        if (property_exists($this, $property)) {
+
+            return $this->$property;
+        }
+
+        return null;
     }
 }
-?>

@@ -58,4 +58,3 @@ class View_Admin extends View
         );
     }
 }
-?>

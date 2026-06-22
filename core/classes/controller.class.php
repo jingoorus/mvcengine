@@ -7,9 +7,9 @@ abstract class Controller
 
 	protected $data = array();
 
-	public function __construct()
+	public function __construct($theme)
 	{
-		$this->view = new View('default');
+		$this->view = new View($theme);
 
 		if ( file_exists(ROOT . '/core/models/model_' . strtolower(Route::$controller) . '.php') ) {
 
@@ -32,10 +32,12 @@ abstract class Controller
 			Route::Page404();
 
 			$this->data = array('template' => 'error.tpl', 'data' => array('content' => 'Page not found'));
-
 		}
 
-		foreach (array('metatitle', 'keywords', 'description') as $meta_tag) Doc::$metainfo[$meta_tag] = $this->data[$meta_tag];
+		foreach (array('metatitle', 'keywords', 'description') as $meta_tag) {
+
+            Doc::setMeta([$meta_tag => $this->data[$meta_tag]]);
+        }
 
 		if (!empty($this->data['page-items'])) {
 

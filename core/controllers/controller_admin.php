@@ -29,11 +29,17 @@ class Controller_Admin extends Controller
 
 		});
 
-		Doc::$metainfo = array('metatitle' => 'Admin zone / JMVC (JinGoo Flatcms)', 'keywords' => '', 'description' => '', 'info' => '');
+		Doc::setMeta([
+			'metatitle' => 'Admin zone / JMVC (JinGoo Flatcms)',
+			'keywords' => '',
+			'description' => '',
+			'info' => ''
+		]);
 
-		Doc::$metainfo['info'] = '';
+		if ($this->admin->login === false && $_SERVER['REQUEST_URI'] != '/admin/') {
 
-		if ($this->admin->login === false && $_SERVER['REQUEST_URI'] != '/admin/') header('Location: /admin/');
+			header('Location: /admin/');
+		}
 	}
 
     public function action_index($sub_tpl = 'page-item.tpl', $sort_sub = false)
@@ -135,10 +141,12 @@ class Controller_Admin extends Controller
 
 			if (Query::get('info') == 'ok'){
 
-			    Doc::$metainfo['info'] = $this->view->build_alert('Success', 'success');
+			    Doc::setMeta(['info' => $this->view->build_alert('Success', 'success')]);
 
-			} elseif (Query::get('info') == 'err')
-			    Doc::$metainfo['info'] = $this->view->build_alert('Done with error: ' . urldecode(Query::get('error')), 'info');
+			} elseif (Query::get('info') == 'err') {
+
+				Doc::setMeta(['info' => $this->view->build_alert('Done with error: ' . urldecode(Query::get('error')), 'info')]);
+			}
 		}
 
 		foreach ($this->model->database as $page_name => $page_data)

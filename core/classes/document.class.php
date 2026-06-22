@@ -1,19 +1,23 @@
 <?php
 final class Doc
 {
-    public static $headers = array();
+    private static $headers = [];
 
-    public static $errors = array();
+    public static $errors = [];
 
-	public static $metainfo = array('metatitle' => '', 'keywords' => '', 'description' => '');
+	private static $metainfo = [
+        'metatitle' => '',
+        'keywords' => '',
+        'description' => ''
+    ];
 
     public static $theme = '';
 
     private static $result = '';
 
-    private static $scripts = array();
+    private static $scripts = [];
 
-    private static $styles = array();
+    private static $styles = [];
 
     public static function echo_document()
     {
@@ -42,7 +46,7 @@ final class Doc
 
         self::compile_headers();
 
-        //unset($view);
+        Event::trigger('document.result.output.before');
 
         echo self::$result;
     }
@@ -64,6 +68,8 @@ final class Doc
 
     public static function echo_xhttp()
     {
+        self::$headers[] = 'Content-Type: application/json';
+
         self::compile_headers();
 
         echo json_encode(self::$result, JSON_UNESCAPED_UNICODE);
@@ -75,5 +81,30 @@ final class Doc
 
             header($header);
         }
+    }
+
+    public static function setHeaders($header)
+    {
+        if (is_array($header)) {
+
+            self::$headers = array_merge(self::$headers, $header);
+
+        } elseif (is_string($header)) {
+
+            self::$headers[] = $header;
+        }
+    }
+
+    public static function compile_users_tag($data)
+    {
+        foreach ($data as $tag => $value) {
+
+            self::$result = str_ireplace('{' . strip_tags($tag) . '}', $value, self::$result);
+        }
+    }
+
+    public static function setMeta(array $metainfo)
+    {
+        self::$metainfo = array_merge(self::$metainfo, $metainfo);
     }
 }

@@ -17,7 +17,6 @@ final class Event
                 call_user_func($func, $args);
             }
         }
-
     }
 
     public static function bind($event, Closure $func)

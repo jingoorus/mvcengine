@@ -3,6 +3,11 @@ abstract class Model
 {
     protected $folder;
 
+    function __construct($folder)
+    {
+        $this->folder = $folder;
+    }
+
     public final function get_data($sort_sub = false)
     {
         $data = array();
