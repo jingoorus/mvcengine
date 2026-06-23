@@ -109,8 +109,6 @@ final class Route
                 'error' => $message
             ]);
 
-            Doc::echo_xhttp();
-
         } else {
 
             $view->generate('error.tpl', [
