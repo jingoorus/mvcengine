@@ -53,7 +53,7 @@ abstract class Controller
         $this->view->generate($data['template'], $data['data']);
 	}
 
-    final public function response()
+    final public function setResponse()
     {
         $this->view->build_document();
     }

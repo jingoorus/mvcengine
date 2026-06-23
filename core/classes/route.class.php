@@ -75,9 +75,9 @@ final class Route
 
             Event::trigger('route.document.build.before', ['controller' => $controller, 'action' => $action]);
 
-            $controller->response();
+            $controller->setResponse();
 
-            Event::trigger('route.document.echo.before');
+            Event::trigger('route.document.echo.before', ['controller' => $controller, 'action' => $action]);
 
             self::response();
 

@@ -95,9 +95,12 @@ final class Doc
 
     public static function compile_users_tag($data)
     {
-        foreach ($data as $tag => $value) {
+        if (is_string(self::$result)) {
 
-            self::$result = str_ireplace('{' . strip_tags($tag) . '}', $value, self::$result);
+            foreach ($data as $tag => $value) {
+
+                self::$result = str_ireplace('{' . strip_tags($tag) . '}', $value, self::$result);
+            }
         }
     }
 
