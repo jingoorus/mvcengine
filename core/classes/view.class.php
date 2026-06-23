@@ -3,6 +3,8 @@ class View
 {
     private $template;
 
+    private $json = [];
+
     public function __construct($theme = '')
     {
         $this->template = new Template($theme != '' ? $theme : '');
@@ -27,11 +29,25 @@ class View
         $this->template->clear();
 	}
 
+    public function json(array $data)
+    {
+        $this->json = $data;
+    }
+
 	public function build_document()
 	{
-        Doc::setOutput($this->template->result['content']);
+        if (!empty($this->template->result['content'])) {
 
-        $this->template->global_clear();
+            Doc::setOutput($this->template->result['content']);
+
+            $this->template->global_clear();
+
+        } elseif (!empty($this->json)) {
+
+            Doc::setOutput($this->json);
+
+            $this->json = [];
+        }
 	}
 
     public function tag($tag_name, $property = array(), $content = '', $close_tag = true)
