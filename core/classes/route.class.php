@@ -100,9 +100,11 @@ final class Route
     {
         http_response_code($code);
 
+        $view = new View('default');
+
         if (getallheaders()['content-type'] == 'application/json') {
 
-            Doc::setOutput([
+            $view->json([
 
                 'error' => $message
             ]);
@@ -111,17 +113,17 @@ final class Route
 
         } else {
 
-            $view = new View('default');
-
             $view->generate('error.tpl', [
 
                 'content' => $message
             ]);
-
-            $view->build_document();
         }
 
+        $view->build_document();
+
         self::response();
+
+        exit;
     }
 
     private static function response()

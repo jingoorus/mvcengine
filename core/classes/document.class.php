@@ -68,6 +68,8 @@ final class Doc
     {
         self::$headers[] = 'Content-Type: application/json';
 
+        self::$headers[] = 'charset=utf-8';
+
         self::compile_headers();
 
         echo json_encode(self::$result, JSON_UNESCAPED_UNICODE);
