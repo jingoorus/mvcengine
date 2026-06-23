@@ -3,15 +3,13 @@ final class Doc
 {
     private static $headers = [];
 
-    public static $errors = [];
-
 	private static $metainfo = [
         'metatitle' => '',
         'keywords' => '',
         'description' => ''
     ];
 
-    public static $theme = '';
+    public static $theme = 'default';
 
     private static $result = '';
 
@@ -61,9 +59,9 @@ final class Doc
         self::$scripts[] = $path;
     }
 
-    public static function addResult($result)
+    public static function setOutput($result)
     {
-        self::$result .= $result;
+        self::$result = $result;
     }
 
     public static function echo_xhttp()

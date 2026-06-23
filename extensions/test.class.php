@@ -8,4 +8,3 @@ class Test
         return $words;
     }
 }
-?>

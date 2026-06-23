@@ -36,4 +36,3 @@ final class Event
         if (file_exists($events_file)) include $events_file;
     }
 }
-?>

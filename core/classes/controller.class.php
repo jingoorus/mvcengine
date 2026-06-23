@@ -1,11 +1,11 @@
 <?php
 abstract class Controller
 {
-	public $view;
+	protected $view;
 
 	protected $model;
 
-	protected $data = array();
+	protected $data = [];
 
 	public function __construct($theme)
 	{
@@ -31,10 +31,15 @@ abstract class Controller
 
 			Route::Page404();
 
-			$this->data = array('template' => 'error.tpl', 'data' => array('content' => 'Page not found'));
+			$this->data = [
+                'template' => 'error.tpl',
+                'data' => [
+                    'content' => 'Page not found'
+                ]
+            ];
 		}
 
-		foreach (array('metatitle', 'keywords', 'description') as $meta_tag) {
+		foreach (['metatitle', 'keywords', 'description'] as $meta_tag) {
 
             Doc::setMeta([$meta_tag => $this->data[$meta_tag]]);
         }
@@ -54,4 +59,9 @@ abstract class Controller
 
         $this->view->generate($this->data['template'], $this->data['data']);
 	}
+
+    final public function response()
+    {
+        $this->view->build_document();
+    }
 }

@@ -2,8 +2,6 @@
 
 final class Route
 {
-    protected static $errors = [];
-
     public static $routes = [];
 
     public static $controller = 'main';
@@ -37,22 +35,6 @@ final class Route
 
         Event::load_events(self::$controller);
 
-        if (getallheaders()['X-Requested-With'] == 'XMLHttpRequest') {
-
-            Event::trigger('route.xhttp.switch.before');
-
-            self::xhttp();
-
-        } else {
-
-            Event::trigger('route.http.switch.before');
-
-            self::http();
-        }
-    }
-
-    private static function http()
-    {
         $model_name = 'Model_' . ucfirst(self::$controller);
 
         $controller_name = 'Controller_' . ucfirst(self::$controller);
@@ -61,7 +43,10 @@ final class Route
 
         $model_path = ROOT . '/core/models/' . strtolower($model_name) . '.php';
 
-        if (file_exists($model_path)) include $model_path;
+        if (file_exists($model_path)) {
+
+            include $model_path;
+        }
 
         $controller_path = ROOT . '/core/controllers/' . strtolower($controller_name) . '.php';
 
@@ -82,42 +67,35 @@ final class Route
             $controller = new Controller_Standart;
         }
 
-        if (is_callable(array($controller, $action))) {
+        if (is_callable([$controller, $action])) {
 
-            Event::trigger('route.action.execute.before', $action);
+            Event::trigger('route.action.execute.before', ['controller' => $controller, 'action' => $action]);
 
             $controller->$action();
 
-            Event::trigger('route.document.build.before', $controller);
+            Event::trigger('route.document.build.before', ['controller' => $controller, 'action' => $action]);
 
-            $controller->view->build_document();
+            $controller->response();
 
             Event::trigger('route.document.echo.before');
 
-            Doc::echo_document();
+            if (getallheaders()['X-Requested-With'] == 'XMLHttpRequest') {
+
+                Event::trigger('route.xhttp.echo.before');
+
+                Doc::echo_xhttp();
+
+            } else {
+
+                Event::trigger('route.http.echo.before');
+
+                Doc::echo_document();
+            }
 
         } else {
 
-            self::Page404('action not found');
+            self::Page404();
         }
-    }
-
-    private static function xhttp()
-    {
-        $method = self::$controller;
-
-        $api = new Extension('Api');
-
-        if (method_exists($api, $method)) {
-
-            Doc::addResult($api->$method(self::$action));
-
-        } else {
-
-            Doc::addResult(['answer' => 'error', 'data' => 'method not exists']);
-        }
-
-        Doc::echo_xhttp();
     }
 
     public static function Page404()

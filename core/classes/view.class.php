@@ -1,9 +1,7 @@
 <?php
 class View
 {
-    private $template = null;
-
-    private $result = [];
+    private $template;
 
     public function __construct($theme = '')
     {
@@ -24,14 +22,14 @@ class View
             }
 		}
 
-        $this->result = $this->template->compile($compile_tag);
+        $this->template->compile($compile_tag);
 
         $this->template->clear();
 	}
 
 	public function build_document()
 	{
-        Doc::addResult($this->result['content']);
+        Doc::setOutput($this->template->result['content']);
 
         $this->template->global_clear();
 	}
@@ -55,6 +53,6 @@ class View
 
     public function get($property)
     {
-        return $this->result[$property] ?? null;
+        return $this->template->result[$property] ?? null;
     }
 }

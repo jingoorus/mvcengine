@@ -2,17 +2,17 @@
 
 final class Template
 {
-    protected $dir = ROOT . '/view/';
+    private $dir = ROOT . '/view/';
 
-    protected $theme = '';
+    private $theme = '';
 
     private $template = null;
 
     private $current_template = null;
 
-    protected $data = array();
+    private $data = [];
 
-    protected $result = array();
+    private $result = [];
 
     public function __construct($theme)
     {
@@ -21,6 +21,11 @@ final class Template
 
     final public function load_template($tpl_name)
     {
+        if ($this->current_template !== null) {
+
+            return true;
+        }
+
         $url = @parse_url($tpl_name);
 
         $tpl_name = pathinfo($url['path']);
@@ -81,29 +86,23 @@ final class Template
 
     final public function _clear()
     {
-        $this->data = array();
-
-        $this->current_template = $this->template;
+        $this->data = [];
     }
 
     final public function clear()
     {
-        $this->data = array();
-
         $this->current_template = null;
 
         $this->template = null;
+
+        $this->_clear();
     }
 
     final public function global_clear()
     {
-        $this->data = array();
+        $this->result = [];
 
-        $this->result = array();
-
-        $this->current_template = null;
-
-        $this->template = null;
+        $this->clear();
     }
 
     final public function compile($tpl)
@@ -135,7 +134,7 @@ final class Template
 
         $this->_clear();
 
-        return $this->result;
+        return true;
     }
 
     public function getTheme()
