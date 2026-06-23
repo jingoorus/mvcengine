@@ -79,18 +79,7 @@ final class Route
 
             Event::trigger('route.document.echo.before');
 
-            if (getallheaders()['X-Requested-With'] == 'XMLHttpRequest') {
-
-                Event::trigger('route.xhttp.echo.before');
-
-                Doc::echo_xhttp();
-
-            } else {
-
-                Event::trigger('route.http.echo.before');
-
-                Doc::echo_document();
-            }
+            self::response();
 
         } else {
 
@@ -104,6 +93,50 @@ final class Route
 
         Doc::setHeaders('Status: 404 Not Found');
 
-        http_response_code(404);
+        self::serverError('Page not found', 404);
+    }
+
+    public static function serverError($message, $code = 500)
+    {
+        http_response_code($code);
+
+        if (getallheaders()['content-type'] == 'application/json') {
+
+            Doc::setOutput([
+
+                'error' => $message
+            ]);
+
+            Doc::echo_xhttp();
+
+        } else {
+
+            $view = new View('default');
+
+            $view->generate('error.tpl', [
+
+                'content' => $message
+            ]);
+
+            $view->build_document();
+        }
+
+        self::response();
+    }
+
+    private static function response()
+    {
+        if (getallheaders()['content-type'] == 'application/json') {
+
+            Event::trigger('route.xhttp.echo.before');
+
+            Doc::echo_xhttp();
+
+        } else {
+
+            Event::trigger('route.http.echo.before');
+
+            Doc::echo_document();
+        }
     }
 }
