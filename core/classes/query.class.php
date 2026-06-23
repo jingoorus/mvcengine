@@ -36,7 +36,7 @@ final class Query
         if (getallheaders()['content-type'] == 'application/json'
             && !empty(file_get_contents('php://input'))) {
 
-            self::$post = json_decode(file_get_contents('php://input'));
+            self::$post = json_decode(file_get_contents('php://input'), true);
 
         } elseif (!empty($_POST)) {
 
