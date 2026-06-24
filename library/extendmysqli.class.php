@@ -1,16 +1,20 @@
 <?php
-
-final class Extendmysqli extends \mysqli
+final class Extendmysqli
 {
-    private $lazyQuery = null;
-
     public $curent_limitless_count = null;
 
-    public function query(string $query, $p = MYSQLI_STORE_RESULT)
-    {
-        $query_result = parent::query($query, $p);
+    private $link = null;
 
-        if (!$this->errno) {
+    public function __construct($host, $user, $password, $db)
+    {
+        $this->link = new \mysqli($host, $user, $password, $db);
+    }
+
+    public function query(string $query)
+    {
+        $query_result = $this->link->query($query);
+
+        if (!$this->link->errno) {
 
             if ($query_result instanceof \mysqli_result) {
                 /**
@@ -42,33 +46,25 @@ final class Extendmysqli extends \mysqli
             /**
              * или ошибка
              */
-            throw new Exception($this->error);
-
-            return null;
+            throw new Exception($this->link->error);
         }
-
     }
 
     public function getLastId()
     {
-        return $this->insert_id;
+        return $this->link->insert_id;
     }
 
     public function escape($value)
     {
-        return $this->real_escape_string($value);
-    }
-
-    public function clean($value)
-    {
-        return $this->escape($value);
+        return $this->link->real_escape_string($value);
     }
 
     public function limitlessSelect($query, $p = MYSQLI_STORE_RESULT)
     {
-        $query_result = parent::query($query, $p);
+        $query_result = $this->link->query($query, $p);
 
-        if (!$this->errno) {
+        if (!$this->link->errno) {
 
             if ($query_result instanceof \mysqli_result) {
 
