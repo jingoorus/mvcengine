@@ -30,7 +30,7 @@ spl_autoload_register(function ($class_name) {
 
     } elseif (file_exists(ROOT . '/extensions/' . strtolower($class_name) . '.class.php')) {
 
-        require_once file_exists(ROOT . '/extensions/' . strtolower($class_name) . '.class.php');
+        require_once ROOT . '/extensions/' . strtolower($class_name) . '.class.php';
     }
 });
 
