@@ -24,13 +24,13 @@ include 'core/classes/config.class.php';
 
 spl_autoload_register(function ($class_name) {
 
-    if (file_exists(ROOT . '/core/library/' . strtolower($class_name) . '.class.php')) {
+    if (file_exists(ROOT . '/library/' . strtolower($class_name) . '.class.php')) {
 
-        require_once ROOT . '/core/library/' . strtolower($class_name) . '.class.php';
+        require_once ROOT . '/library/' . strtolower($class_name) . '.class.php';
 
-    } elseif (file_exists(ROOT . '/core/extensions/' . strtolower($class_name) . '.class.php')) {
+    } elseif (file_exists(ROOT . '/extensions/' . strtolower($class_name) . '.class.php')) {
 
-        require_once file_exists(ROOT . '/core/extensions/' . strtolower($class_name) . '.class.php');
+        require_once file_exists(ROOT . '/extensions/' . strtolower($class_name) . '.class.php');
     }
 });
 
