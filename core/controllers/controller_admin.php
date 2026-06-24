@@ -273,7 +273,7 @@ class Controller_Admin extends Controller
 			$action = 'add';
 		}
 
-		Event::trigger('admin.savepage.init', array('action'=>$action, 'page'=>$page));
+		Event::trigger('admin.savepage.init', $page);
 
 		$post_data = Query::post();
 

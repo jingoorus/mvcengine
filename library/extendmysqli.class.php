@@ -1,6 +1,5 @@
 <?php
 
-namespace library;
 final class Extendmysqli extends \mysqli
 {
     private $lazyQuery = null;
