@@ -19,7 +19,7 @@ class Model_Admin
                 if (is_dir($this->path . $name)
                     && !in_array($name, ['.', '..'])) {
 
-                    $database = array_merge($database, $this->scan_dir($this->path . $name));
+                    $database = array_merge($database, $this->scan_dir($name));
                 }
             }
         }
