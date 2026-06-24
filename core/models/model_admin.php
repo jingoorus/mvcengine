@@ -1,77 +1,95 @@
 <?php
+
 class Model_Admin
 {
-    protected $path;
+    protected $path = ROOT . '/database/';
 
-    public $database = array();
+    public $database = [];
 
-    function __construct($dir = false)
+    public function scan_base()
     {
-        $this->path = ROOT . '/database/';
+        $database = [];
 
-        if ($dir === true) $this->scan_base();
-        elseif ( is_string($dir) ) $this->scan_dir( ROOT . '/database/'. $dir);
-    }
-
-    protected function scan_base()
-    {
         if (is_dir($this->path)) {
 
             $data = scandir($this->path);
 
-            foreach ($data as $name)
-            {
-                if (is_dir($this->path.$name) && !in_array($name, array('.', '..'))) $this->scan_dir($this->path.$name);
+            foreach ($data as $name) {
+
+                if (is_dir($this->path . $name)
+                    && !in_array($name, ['.', '..'])) {
+
+                    $database = array_merge($database, $this->scan_dir($this->path . $name));
+                }
             }
         }
+
+        return $database;
     }
 
-    protected function scan_dir($dir_name)
+    public function scan_dir($dir_name)
     {
-        $pages = scandir($dir_name);
+        $database = [];
+
+        $pages = scandir($this->path . $dir_name);
 
         $name = str_ireplace($this->path, '', $dir_name);
 
-        foreach ($pages as $file_name)
-        {
+        foreach ($pages as $file_name) {
             $data_name = str_replace('.json', '', $file_name);
 
-            if( strpos($file_name,'.json') !== false) {
+            if (strpos($file_name, '.json') !== false) {
 
-                if (!isset($this->database[$name])) $this->database[$name] = array();
+                if (!isset($database[$name])) {
 
-                $this->database[$name][$data_name] = json_decode(file_get_contents($dir_name.'/'.$file_name), true);
+                    $database[$name] = [];
+                }
+
+                $database[$name][$data_name] = json_decode(file_get_contents($this->path . $dir_name . '/' . $file_name), true);
             }
         }
+
+        return $database;
     }
 
     public function save_page($page_name, $data, $file_name)
     {
-        if (!is_dir(ROOT. '/database/' . $page_name)) {
+        if (!is_dir(ROOT . '/database/' . $page_name)) {
 
-            if (!mkdir(ROOT. '/database/' . $page_name)) return false;
+            if (!mkdir(ROOT . '/database/' . $page_name)) {
+
+                return false;
+            }
 
         }
 
-        if (file_put_contents( ROOT. '/database/' . $page_name . '/' .
-        $file_name, $data)){
+        if (file_put_contents(ROOT . '/database/' . $page_name . '/' .
+            $file_name, $data)) {
 
             return true;
 
-        } else return false;
+        } else {
+
+            return false;
+        }
     }
 
     public function save_users($users)
     {
         $users = json_encode($users, JSON_UNESCAPED_UNICODE);
 
-        if(file_put_contents( ROOT . '/database/users.json', $users)) return true;
-        else return false;
+        if (file_put_contents(ROOT . '/database/users.json', $users)) {
+
+            return true;
+
+        } else {
+
+            return false;
+        }
     }
 
     public function get_users()
     {
-        return json_decode( file_get_contents(ROOT . '/database/users.json'), true );
+        return json_decode(file_get_contents(ROOT . '/database/users.json'), true);
     }
 }
-?>

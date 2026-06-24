@@ -21,11 +21,18 @@ include 'core/classes/view.class.php';
 include 'core/classes/document.class.php';
 include 'core/classes/dictionary.class.php';
 include 'core/classes/config.class.php';
-/**
- *Extension loader for frontend classes (in admin mode classes loaded automaticaly by spl_autoload from 'library' folder)
- *Extension class first check extensions folder, then library, because user might be rewrite any classes by self
- **/
-include 'core/classes/extension.class.php';
+
+spl_autoload_register(function ($class_name) {
+
+    if (file_exists(ROOT . '/core/library/' . strtolower($class_name) . '.class.php')) {
+
+        require_once ROOT . '/core/library/' . strtolower($class_name) . '.class.php';
+
+    } elseif (file_exists(ROOT . '/core/extensions/' . strtolower($class_name) . '.class.php')) {
+
+        require_once file_exists(ROOT . '/core/extensions/' . strtolower($class_name) . '.class.php');
+    }
+});
 
 new Route;
 

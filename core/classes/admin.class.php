@@ -1,4 +1,5 @@
 <?php
+
 final class Admin_Control
 {
     private $controllers_folder = ROOT . '/core/controllers/';
@@ -11,30 +12,30 @@ final class Admin_Control
 
     private $view;
 
-	private $controller_type = 'Controller_Standart';
+    private $controller_type = 'Controller_Standart';
 
-	private $model_type = 'Model_Standart';
+    private $model_type = 'Model_Standart';
 
-	private $controller_list = '';
+    private $controller_list = '';
 
-	private $model_list = '';
+    private $model_list = '';
 
     private $login = false;
 
-    function __construct()
+    function __construct($users)
     {
-		$this->auth();
+        $this->auth($users);
     }
 
-	public function define_engine($page)
-	{
+    public function define_engine($page)
+    {
         $this->view = new View_Admin;
 
-		if (file_exists($this->controllers_folder . 'controller_'.$page.'.php'))
-            $this->controller_type = 'Controller_'.mb_convert_case($page, MB_CASE_TITLE, "UTF-8");
+        if (file_exists($this->controllers_folder . 'controller_' . $page . '.php'))
+            $this->controller_type = 'Controller_' . mb_convert_case($page, MB_CASE_TITLE, "UTF-8");
 
-        if (file_exists($this->models_folder . 'model_'.$page.'.php'))
-            $this->model_type = 'Model_'.mb_convert_case($page, MB_CASE_TITLE, "UTF-8");
+        if (file_exists($this->models_folder . 'model_' . $page . '.php'))
+            $this->model_type = 'Model_' . mb_convert_case($page, MB_CASE_TITLE, "UTF-8");
 
         if (!strpos($page, '.html')) {
 
@@ -43,7 +44,7 @@ final class Admin_Control
             $this->scan_models($page);
         }
 
-		$is_standart = $this->controller_type == 'Controller_Standart' ? ' checked=""' : '';
+        $is_standart = $this->controller_type == 'Controller_Standart' ? ' checked=""' : '';
 
         $this->view->generate('page-label-controller.tpl',
             array(
@@ -51,9 +52,9 @@ final class Admin_Control
                 'will' => 'will be used',
                 'is_checked' => $is_standart
             ),
-        'controller-standart');
+            'controller-standart');
 
-		$is_standart = $this->model_type == 'Model_Standart' ? ' checked=""' : '';
+        $is_standart = $this->model_type == 'Model_Standart' ? ' checked=""' : '';
 
         $this->view->generate('page-label-model.tpl',
             array(
@@ -61,48 +62,48 @@ final class Admin_Control
                 'will' => 'will be used',
                 'is_checked' => $is_standart
             ),
-        'model-standart');
+            'model-standart');
 
-        $this->controller_list = $this->view->get('controller-standart').
-        $this->view->get('controller-list').
-        $this->view->tag('input',
-            array(
-                'type' => 'hidden',
-                'name' => 'controller_current',
-                'value' => $this->controller_type
-            ), '', false
-        );
+        $this->controller_list = $this->view->get('controller-standart') .
+            $this->view->get('controller-list') .
+            $this->view->tag('input',
+                array(
+                    'type' => 'hidden',
+                    'name' => 'controller_current',
+                    'value' => $this->controller_type
+                ), '', false
+            );
 
-        $this->model_list = $this->view->get('model-standart').
-        $this->view->get('model-list').
-        $this->view->tag('input',
-            array(
-                'type' => 'hidden',
-                'name' => 'model_current',
-                'value' => $this->model_type
-            ), '', false
-        );
-	}
+        $this->model_list = $this->view->get('model-standart') .
+            $this->view->get('model-list') .
+            $this->view->tag('input',
+                array(
+                    'type' => 'hidden',
+                    'name' => 'model_current',
+                    'value' => $this->model_type
+                ), '', false
+            );
+    }
 
     private function scan_controllers($page, $build_engine = true)
     {
-		foreach (glob($this->controllers_folder . 'controller_*.php') as $filename) {
+        foreach (glob($this->controllers_folder . 'controller_*.php') as $filename) {
 
             $first_char = explode('/', $filename);
 
-			if ($filename == $this->controllers_folder . 'controller_admin.php' ||
-            strpos('_', $first_char[count($first_char) - 1]) === 0)
+            if ($filename == $this->controllers_folder . 'controller_admin.php' ||
+                strpos('_', $first_char[count($first_char) - 1]) === 0)
                 continue;
 
-			$controller_file_name = str_replace('.php', '',
-            str_replace($this->controllers_folder . 'controller_', '', $filename));
+            $controller_file_name = str_replace('.php', '',
+                str_replace($this->controllers_folder . 'controller_', '', $filename));
 
-			$controller_name = 'Controller_' . mb_convert_case($controller_file_name,
-            MB_CASE_TITLE, "UTF-8");
+            $controller_name = 'Controller_' . mb_convert_case($controller_file_name,
+                    MB_CASE_TITLE, "UTF-8");
 
             $this->controllers[] = $controller_name;
 
-			if ($build_engine === true) {
+            if ($build_engine === true) {
 
                 $will = $controller_file_name == $page ? 'already created and will be applayed' : 'will be copied';
 
@@ -133,19 +134,19 @@ final class Admin_Control
 
             $first_char = explode('/', $filename);
 
-			if ($filename == $this->models_folder . 'model_admin.php' ||
-            strpos('_', $first_char[count($first_char) - 1]) === 0)
+            if ($filename == $this->models_folder . 'model_admin.php' ||
+                strpos('_', $first_char[count($first_char) - 1]) === 0)
                 continue;
 
-			$model_file_name = str_replace('.php', '',
-            str_replace($this->models_folder . 'model_', '', $filename));
+            $model_file_name = str_replace('.php', '',
+                str_replace($this->models_folder . 'model_', '', $filename));
 
-			$model_name = 'Model_' . mb_convert_case($model_file_name,
-            MB_CASE_TITLE, "UTF-8");
+            $model_name = 'Model_' . mb_convert_case($model_file_name,
+                    MB_CASE_TITLE, "UTF-8");
 
             $this->models[] = $model_name;
 
-			if ($build_engine === true) {
+            if ($build_engine === true) {
 
                 $will = $model_file_name == $page ? 'already created and will be applayed' : 'will be copied';
 
@@ -206,8 +207,8 @@ final class Admin_Control
 
         $this->scan_models($page, false);
 
-        if (in_array($copy_model, $this->models)  ||
-        $copy_model == 'Model_Standart') {
+        if (in_array($copy_model, $this->models) ||
+            $copy_model == 'Model_Standart') {
 
             $options = [
                 'parent' => $this->models_folder . strtolower($copy_model) . '.php', 'page_name' => $page,
@@ -231,39 +232,39 @@ final class Admin_Control
 
         if (file_exists($path) && is_dir($path)) {
 
-			$dir_handle = opendir($path);
+            $dir_handle = opendir($path);
 
-			while (false !== ($file = readdir($dir_handle))) {
+            while (false !== ($file = readdir($dir_handle))) {
 
-				if ($file != '.' && $file != '..') {
+                if ($file != '.' && $file != '..') {
 
-					$tmp_path = $path . '/' . $file;
+                    $tmp_path = $path . '/' . $file;
 
-					Event::trigger('admin.deletepage.deleteitem.before', $tmp_path);
+                    Event::trigger('admin.deletepage.deleteitem.before', $tmp_path);
 
-					chmod($tmp_path, 0777);
+                    chmod($tmp_path, 0777);
 
-					if(file_exists($tmp_path)) {
+                    if (file_exists($tmp_path)) {
 
-						if (!unlink($tmp_path)) {
+                        if (!unlink($tmp_path)) {
 
                             $errors[] = $tmp_path;
                         }
-					}
-				}
-			}
+                    }
+                }
+            }
 
-			closedir($dir_handle);
+            closedir($dir_handle);
 
-			Event::trigger('admin.deletepage.before', $path);
+            Event::trigger('admin.deletepage.before', $path);
 
-			if (file_exists($path)) {
+            if (file_exists($path)) {
 
-				if (rmdir($path)) {
+                if (rmdir($path)) {
 
-					return true;
+                    return true;
 
-				} elseif (count($errors)) {
+                } elseif (count($errors)) {
 
                     $errors[] = $path;
 
@@ -271,9 +272,10 @@ final class Admin_Control
 
                 } else return 'rmdir() failed';
 
-			} return 'file ' . $path . ' not exists';
+            }
+            return 'file ' . $path . ' not exists';
 
-		} elseif (!is_dir($path)) {
+        } elseif (!is_dir($path)) {
 
             return $path . ':  isn`t folder';
 
@@ -289,9 +291,9 @@ final class Admin_Control
 
         $lf = ROOT . '/core/language/';
 
-        foreach(glob($lf . '*.php') as $file_path) {
+        foreach (glob($lf . '*.php') as $file_path) {
 
-            $langs[] =  str_ireplace('.class.php', '', str_ireplace($lf . 'adminlang.', '', $file_path));
+            $langs[] = str_ireplace('.class.php', '', str_ireplace($lf . 'adminlang.', '', $file_path));
         }
 
         return $langs;
@@ -303,22 +305,27 @@ final class Admin_Control
 
         $users = $model->get_users();
 
-        if ($_SESSION && $_SESSION['user_name'] != ''
-            && $_SESSION['user_password'] != '') {
+        if (!empty($_SESSION)
+            && !empty($_SESSION['user_name'])
+            && !empty($_SESSION['user_password'])) {
+
+            $_SESSION['user_name'] = preg_replace('#[^\w]#', '', $_SESSION['user_name']);
 
             if ($users[$_SESSION['user_name']] == $_SESSION['user_password']) {
 
                 $this->login = true;
             }
 
-        } elseif (!empty(Query::post('user_name') )
-                  &&  !empty(Query::post('user_password'))) {
+        } elseif (!empty(Query::post('user_name'))
+                  && !empty(Query::post('user_password'))) {
 
             $password = md5(Query::post('user_password'));
 
-            if ($users[Query::post('user_name')] == $password) {
+            $user_name = Query::post('user_name');
 
-                $_SESSION['user_name'] = Query::post('user_name');
+            if ($users[$user_name] == $password) {
+
+                $_SESSION['user_name'] = $user_name;
 
                 $_SESSION['user_password'] = $password;
 
@@ -329,7 +336,7 @@ final class Admin_Control
 
     public function get_config()
     {
-        return json_decode( file_get_contents(ROOT . '/database/config.json'), true );
+        return json_decode(file_get_contents(ROOT . '/database/config.json'), true);
     }
 
     public function __get($property)

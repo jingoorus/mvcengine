@@ -11,7 +11,10 @@ Event::bind('admin.savepage.init', function($page_name){
 
     $post = Query::post();
 
-    if ($post['event_data'] && $post['event_data'] != '') file_put_contents(ROOT . '/core/events/event_'.$page_name.'.php', $post['event_data']);
+    if ($post['event_data'] && $post['event_data'] != '') {
+
+        file_put_contents(ROOT . '/core/events/event_' . $page_name . '.php', $post['event_data']);
+    }
 
 });
 

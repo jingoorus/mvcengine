@@ -3,9 +3,9 @@ class Controller_Admin extends Controller
 {
 	protected $admin = false;
 
-	public static $page_extensions = array();
+	public static $page_extensions = [];
 
-	public static $page_extensions_results = array();
+	public static $page_extensions_results = [];
 
 	function __construct()
 	{
@@ -19,15 +19,11 @@ class Controller_Admin extends Controller
 
 		$this->admin = new Admin_Control;
 
+        $this->model = new Model_Admin;
+
 		$config = $this->admin->get_config();
 
 		include ROOT . '/core/language/adminlang.'.$config['language'].'.class.php';
-
-		spl_autoload_register(function ($class_name) {
-
-		    include_once ROOT . '/core/library/' . strtolower($class_name) . '.class.php';
-
-		});
 
 		Doc::setMeta([
 			'metatitle' => 'Admin zone / JMVC (JinGoo Flatcms)',
@@ -68,11 +64,11 @@ class Controller_Admin extends Controller
 
 		Event::trigger('admin.editpage.init', $page);
 
-	    $this->model = new Model_Admin($page);
+	    $database = $this->model->scan_dir($page);
 
 		$this->admin->define_engine($page);
 
-		foreach ($this->model->database[$page]['data']['data'] as $tag_name => $tag_data)
+		foreach ($database[$page]['data']['data'] as $tag_name => $tag_data)
 		{
 			$this->view->generate('page-pagedata.tpl', array(
 
@@ -107,13 +103,13 @@ class Controller_Admin extends Controller
 
 			'title' => $page,
 
-			'metatitle' => $this->model->database[$page]['data']['metatitle'],
+			'metatitle' => $database[$page]['data']['metatitle'],
 
-			'keywords' => $this->model->database[$page]['data']['keywords'],
+			'keywords' => $database[$page]['data']['keywords'],
 
-			'description' => $this->model->database[$page]['data']['description'],
+			'description' => $database[$page]['data']['description'],
 
-			'template' => $this->model->database[$page]['data']['template'],
+			'template' => $database[$page]['data']['template'],
 
 			'content' => $this->view->get('page_data'),
 
@@ -135,7 +131,7 @@ class Controller_Admin extends Controller
 
     public function action_editpages()
 	{
-	    $this->model = new Model_Admin(true);
+        $database = $this->model->scan_base();
 
 		if (Query::get('info')) {
 
@@ -149,7 +145,7 @@ class Controller_Admin extends Controller
 			}
 		}
 
-		foreach ($this->model->database as $page_name => $page_data)
+		foreach ($database as $page_name => $page_data)
 		{
 			$is_folder = (strpos($page_name,'.html') === false) ?  $this->view->tag('a', array('href'=>'/admin/addpageitem/?page='.$page_name), $this->view->tag('span', array('class'=>'fui-plus-circle'),'')) : $this->view->tag('span', array('class'=>'fui-document'),'');
 
@@ -165,7 +161,7 @@ class Controller_Admin extends Controller
 
 							'li',
 
-							array(),
+							[],
 
 							$this->view->tag(
 
@@ -193,7 +189,7 @@ class Controller_Admin extends Controller
 
 				    'li',
 
-					array(),
+					[],
 
 					$is_folder.' '.$this->view->tag(
 
@@ -215,7 +211,7 @@ class Controller_Admin extends Controller
 
 			    'title' => 'Pages editor',
 
-				'button' => $this->view->tag('div', array(), $this->view->tag('a', array('class'=>'btn btn-success','href'=>'/admin/addpage/'), 'Add page'))
+				'button' => $this->view->tag('div', [], $this->view->tag('a', array('class'=>'btn btn-success','href'=>'/admin/addpage/'), 'Add page'))
 		    )
 	    );
 	}
@@ -285,7 +281,7 @@ class Controller_Admin extends Controller
 
 			'template' => $post_data['template'],
 
-			'data' => array(),
+			'data' => [],
 
 			'metatitle' => $post_data['metatitle'],
 
@@ -299,7 +295,7 @@ class Controller_Admin extends Controller
 			$data_file['data'][strip_tags($tag_name)] = $post_data['tags_data'][$tag_name];
 		}
 
-		$constructor_errors = array();
+		$constructor_errors = [];
 
 		if ($post_data['controllers_name'] != $post_data['controller_current'])
 		{
@@ -379,11 +375,11 @@ class Controller_Admin extends Controller
 
 		$item = Query::get('item');
 
-		$this->model = new Model_Admin($page);
+        $database = $this->model->scan_dir($page);
+var_dump($database);
+		if (isset($database[$page][$item])) {
 
-		if (isset($this->model->database[$page][$item])) {
-
-			foreach ($this->model->database[$page][$item]['data'] as $tag_name => $tag_data)
+			foreach ($database[$page][$item]['data'] as $tag_name => $tag_data)
 			{
 				$this->view->generate('page-pagedata.tpl', array(
 
@@ -420,13 +416,13 @@ class Controller_Admin extends Controller
 
 				'item' => $item,
 
-				'metatitle' => $this->model->database[$page][$item]['metatitle'],
+				'metatitle' => $database[$page][$item]['metatitle'],
 
-				'keywords' => $this->model->database[$page][$item]['keywords'],
+				'keywords' => $database[$page][$item]['keywords'],
 
-				'description' => $this->model->database[$page][$item]['description'],
+				'description' => $database[$page][$item]['description'],
 
-				'template' => $this->model->database[$page][$item]['template'],
+				'template' => $database[$page][$item]['template'],
 
 				'content' => $this->view->get('page_data'),
 
@@ -476,7 +472,7 @@ class Controller_Admin extends Controller
 
 			'template' => $post_data['template'],
 
-			'data' => array(),
+			'data' => [],
 
 			'metatitle' => $post_data['metatitle'],
 
@@ -655,7 +651,9 @@ class Controller_Admin extends Controller
 
     public function action_editusers()
 	{
-		$users = $this->admin->get_users();
+        $this->model = new Model_Admin;
+
+		$users = $this->model->get_users();
 
 		foreach ($users as $tag_name => $tag_data)
 		{
@@ -663,7 +661,7 @@ class Controller_Admin extends Controller
 
 				'li',
 
-				array(),
+				[],
 
 				$this->view->tag(
 
@@ -847,7 +845,7 @@ class Controller_Admin extends Controller
 	{
 		$this->model = new Model_Admin;
 
-		$users = $this->admin->get_users();
+		$users = $this->model->get_users();
 
 		foreach (Query::post() as $key => $value) {
 
@@ -874,4 +872,3 @@ class Controller_Admin extends Controller
 		}
 	}
 }
-?>
