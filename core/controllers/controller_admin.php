@@ -376,7 +376,7 @@ class Controller_Admin extends Controller
 		$item = Query::get('item');
 
         $database = $this->model->scan_dir($page);
-var_dump($database);
+
 		if (isset($database[$page][$item])) {
 
 			foreach ($database[$page][$item]['data'] as $tag_name => $tag_data)

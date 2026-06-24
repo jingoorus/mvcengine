@@ -22,9 +22,9 @@ final class Admin_Control
 
     private $login = false;
 
-    function __construct($users)
+    function __construct()
     {
-        $this->auth($users);
+        $this->auth();
     }
 
     public function define_engine($page)
