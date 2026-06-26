@@ -363,7 +363,7 @@ final class Admin_Control
 
                     foreach ($options['menu'] as $name => $link) {
 
-                        $this->menu[$name ] = '/admin/module/?module=' . $module_name . '&' . $link;
+                        $this->menu[$name ] = '/admin/module/?module=' . $module_name . '&action=' . $link;
                     }
                 }
            }
