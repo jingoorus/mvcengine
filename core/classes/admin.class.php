@@ -347,7 +347,7 @@ final class Admin_Control
 
     private function load_modules()
     {
-        foreach (glob(__DIR__ . '/modules/*.php', GLOB_NOSORT) as $file) {
+        foreach (glob(ROOT . '/core/modules/*.php', GLOB_NOSORT) as $file) {
 
             include $file;
 
