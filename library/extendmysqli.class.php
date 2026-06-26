@@ -60,9 +60,9 @@ final class Extendmysqli
         return $this->link->real_escape_string($value);
     }
 
-    public function limitlessSelect($query, $p = MYSQLI_STORE_RESULT)
+    public function limitlessSelect($query)
     {
-        $query_result = $this->link->query($query, $p);
+        $query_result = $this->link->query($query);
 
         if (!$this->link->errno) {
 

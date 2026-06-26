@@ -22,9 +22,20 @@ final class Admin_Control
 
     private $login = false;
 
+    private $menu = [
+        'Pages' => '/admin/editpages/',
+        'Settings' => '/admin/editsettings/',
+        'Users' => '/admin/editusers/'
+    ];
+
     function __construct()
     {
         $this->auth();
+
+        if ($this->login === true) {
+
+            $this->load_modules();
+        }
     }
 
     public function define_engine($page)
@@ -334,6 +345,31 @@ final class Admin_Control
         }
     }
 
+    private function load_modules()
+    {
+        foreach (glob(__DIR__ . '/modules/*.php', GLOB_NOSORT) as $file) {
+
+            include $file;
+
+            $module_name = basename($file, '.php');
+
+            $class_name = ucfirst($module_name);
+
+           if (is_callable($class_name, 'register')) {
+
+                $options = call_user_func([$class_name, 'register']);
+
+                if (!empty($options['menu'])) {
+
+                    foreach ($options['menu'] as $name => $link) {
+
+                        $this->menu[$name ] = '/admin/module/?module=' . $module_name . '&' . $link;
+                    }
+                }
+           }
+        }
+    }
+
     public function get_config()
     {
         return json_decode(file_get_contents(ROOT . '/database/config.json'), true);
@@ -347,5 +383,19 @@ final class Admin_Control
         }
 
         return null;
+    }
+
+    public function generate_menu()
+    {
+        $view = new View_Admin;
+
+        $result_menu = '';
+
+        foreach ($this->menu as $name => $link) {
+
+            $result_menu .= $view->tag('li', [], $view->tag('a', ['href' => $link], $name));
+        }
+
+        return $result_menu;
     }
 }

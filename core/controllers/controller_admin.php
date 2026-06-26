@@ -15,6 +15,10 @@ class Controller_Admin extends Controller
 
 		include ROOT . '/core/classes/constructor.class.php';
 
+		include ROOT . '/core/classes/modules.class.php';
+
+		include ROOT . '/core/classes/adminmenu.class.php';
+
 		$this->view = new View_Admin;
 
 		$this->admin = new Admin_Control;
@@ -32,10 +36,13 @@ class Controller_Admin extends Controller
 			'info' => ''
 		]);
 
-		if ($this->admin->login === false && $_SERVER['REQUEST_URI'] != '/admin/') {
+		if ($this->admin->login === false
+            && $_SERVER['REQUEST_URI'] != '/admin/') {
 
 			header('Location: /admin/');
 		}
+
+        Doc::setMeta(['admin_menu' => $this->admin->generate_menu()]);
 	}
 
     public function action_index($sub_tpl = 'page-item.tpl', $sort_sub = false)
@@ -871,4 +878,20 @@ class Controller_Admin extends Controller
 			'Back to '.$_SERVER['HTTP_REFERER']), 'danger')));
 		}
 	}
+
+    public function action_module()
+    {
+        $class_name = ucfirst(Query::get('module'));
+
+        $class = new $class_name;
+
+        $action = 'action_' . Query::get('action');
+
+        if (method_exists($class, $action)) {
+
+            $result = call_user_func([$class, $action]);
+
+            $this->view->generate($result['tpl'], $result['data']);
+        }
+    }
 }

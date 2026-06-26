@@ -24,10 +24,7 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse-01">
                 <ul class="nav navbar-nav">
-                    <li><a href="/admin/editpages/">Pages</a></li>
-                    <li><a href="/admin/editsettings/">Settings</a></li>
-                    <!--<li><a href="/admin/editextensions/">Extensions</a></li>-->
-                    <li><a href="/admin/editusers/">Users</a></li>
+                    {admin_menu}
                 </ul>
                 <form class="navbar-form navbar-right" action="/admin/searchpages/" role="search">
                     <div class="form-group">

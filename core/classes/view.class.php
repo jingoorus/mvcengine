@@ -50,7 +50,7 @@ class View
         }
 	}
 
-    public function tag($tag_name, $property = array(), $content = '', $close_tag = true)
+    public function tag($tag_name, $property = [], $content = '', $close_tag = true)
     {
         $close_tag = $close_tag === true ? '</'.$tag_name.'>' : '' ;
 
