@@ -23,9 +23,9 @@ final class Admin_Control
     private $login = false;
 
     private $menu = [
-        'Pages' => '/admin/editpages/',
-        'Settings' => '/admin/editsettings/',
-        'Users' => '/admin/editusers/'
+        'Страницы' => '/admin/editpages/',
+        'Настройки' => '/admin/editsettings/',
+        'Пользователи' => '/admin/editusers/'
     ];
 
     function __construct()
